@@ -1,1 +1,0 @@
-{"version":3,"sources":["parallaxOnePage.js"],"names":[],"mappings":";;AACA,IAAI,IAAI,EAAJ;;AAEJ,MAAM,CAAN","file":"all.js","sourcesContent":["\nlet i = 20;\n\nalert(i);"],"sourceRoot":"/source/"}
