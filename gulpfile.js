@@ -52,7 +52,7 @@ function css(){
 
 function watch() {
     js(true);
-    css();
+    gulp.watch('./src/css/*.css',css);
 }
 
 gulp.task('build', function() {  
@@ -60,5 +60,5 @@ gulp.task('build', function() {
     css();
 });
 
-gulp.task('watch', function() { return watch(); });
+gulp.task('watch', watch);
 gulp.task('default', ['watch']);

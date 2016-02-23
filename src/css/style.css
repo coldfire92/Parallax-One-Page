@@ -1,6 +1,19 @@
 
-section {
-	h3 {
-		display: block;
+html, body {
+  height: 100vh;
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+div#scroll-wrapper {
+	height: 100%;
+	left: 0;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	
+	section {
+		height: 100%;
+		width: 100%;
 	}
 }
