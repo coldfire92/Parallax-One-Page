@@ -2,15 +2,16 @@
   "name": "parallax-one-page",
   "version": "1.0.0",
   "description": "",
-  "main": "gulpfile.js",
+  "main": "build/parallaxOnePage.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
     "babelify": "^7.2.0",
     "gulp": "^3.9.0",
+    "gulp-postcss": "^6.1.0",
     "gulp-util": "^3.0.7"
   },
-  "author": "",
+  "author": "Michał Pawełczyk",
   "license": "ISC"
 }

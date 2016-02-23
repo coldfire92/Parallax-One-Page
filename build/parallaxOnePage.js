@@ -53,4 +53,4 @@ exports.default = slidesContainer;
 },{}]},{},[1])
 
 
-//# sourceMappingURL=build.js.map
+//# sourceMappingURL=parallaxOnePage.js.map
