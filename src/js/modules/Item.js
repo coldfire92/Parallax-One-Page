@@ -1,5 +1,5 @@
 
-export default class Item {
+export default class {
   
   constructor(config){
  	 this.config = config;
