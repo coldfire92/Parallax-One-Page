@@ -17,8 +17,4 @@ div#scroll-wrapper {
 		width: 100vw;
 		position: relative;
 	}
-
-	.item {
-		transition: all 320ms;
-	}
 }

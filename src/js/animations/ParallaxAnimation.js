@@ -58,15 +58,13 @@ export default class {
 
     var relativeY = Math.floor(speed * this.bounce, 2);
 
-    // if(Math.abs(relativeY) > 90 && this.max){
-    //    this.afterIncreaseMaxCallback(relativeY, direction);
-    //    return;
-    // }
+    if(Math.abs(relativeY) > 50 && this.max){
+       this.afterIncreaseMaxCallback(relativeY, direction);
+       return;
+    }
 
     var y = relativeY + this.transYGlobal; 
     
     this.el.style.transform = `translate(0px, ${y}px)`;
-    
-    // startAnimation.call(this);
   }
 }

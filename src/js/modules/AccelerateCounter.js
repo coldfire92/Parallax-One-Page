@@ -7,21 +7,12 @@ const ACCELERATION = 1;
 const MAX_SPEED = 120;
 const WIND = 1.8;
 
-var getCurrentState = function(){
-    
+var getCurrentState = function(){    
     var speedAbs = Math.abs(this.currSpeed);
 
-    // console.log(this.currSpeed);
-    
     if( this.scrolling &&  speedAbs < MAX_SPEED ){
         return this.direction === 'UP' ? 'SCROLLING_UP' : 'SCROLLING_DOWN';
     } 
-
-    // if( this.scrolling && (speedAbs > (MAX_SPEED - 3)) ){
-    //    return this.direction === 'UP' ? 'MAX_UP' : 'MAX_DOWN';
-    // }
-
-    // console.log(speedAbs);
 
     if( !this.scrolling && this.direction === 'DOWN' && this.currSpeed > 0) {
        return 'MOVE_BACK_UP';
@@ -46,6 +37,7 @@ var calcSpeed = function(state){
       case 'MOVE_BACK_DOWN' : this.currSpeed = this.currSpeed + WIND; break;
       case 'SCROLLING_MAX_UP'         : this.currSpeed = MAX_SPEED; break;
       case 'SCROLLING_MAX_DOWN'       : this.currSpeed = -MAX_SPEED; break;
+      case 'IDLE' : this.currSpeed = 0; break;
    }
 };
 
@@ -57,10 +49,7 @@ var tick = function(){
    var state = getCurrentState.call(this);
 
    calcSpeed.call(this,state);
-
-   // if(state !== 'IDLE'){
-      this.callback(this.currSpeed, this.direction); 
-   // }
+   this.callback(this.currSpeed, this.direction);  
 
 	 window.requestAnimationFrame(tick.bind(this));
 };
@@ -82,8 +71,6 @@ var onScroll = function(event, delta){
    } else if( this.currentDelta > 10 ){
       this.currentDelta = this.currentDelta / 10;
    }
-
-   console.log(this.currentDelta);
 
 	 clearTimeout(timer);
 	 timer = setTimeout(setNotScrolling.bind(this), 140);
