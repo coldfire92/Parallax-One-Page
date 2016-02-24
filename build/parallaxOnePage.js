@@ -93,15 +93,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var setNewDelta = function setNewDelta(delta) {
-
-  // if( Math.abs(this.currentDelta) <= Math.abs(delta) ){
-  this.currentDelta = delta;
-  // }
-
-  // console.log(`Current delta: ${delta}, delta saved for animation ${this.currentDelta}`);
-};
-
 var _class = function () {
   _createClass(_class, [{
     key: 'changeGlobalTranslate',
@@ -167,12 +158,10 @@ var _class = function () {
 
       var relativeY = Math.floor(speed * this.bounce, 2);
 
-      console.log(direction);
-
-      if (Math.abs(relativeY) > 90 && this.max) {
-        this.afterIncreaseMaxCallback(relativeY, direction);
-        return;
-      }
+      // if(Math.abs(relativeY) > 90 && this.max){
+      //    this.afterIncreaseMaxCallback(relativeY, direction);
+      //    return;
+      // }
 
       var y = relativeY + this.transYGlobal;
 
@@ -192,12 +181,14 @@ exports.default = _class;
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-// import ItemsContainer from './modules/ItemsContainer.js';
-
 
 var _SlidesWrapper = require('./modules/SlidesWrapper.js');
 
 var _SlidesWrapper2 = _interopRequireDefault(_SlidesWrapper);
+
+var _ItemsContainer = require('./modules/ItemsContainer.js');
+
+var _ItemsContainer2 = _interopRequireDefault(_ItemsContainer);
 
 var _AccelerateCounter = require('./modules/AccelerateCounter.js');
 
@@ -220,7 +211,7 @@ var defaults = {
 var onScroll = function onScroll(speed, direction) {
 	// console.log(accelerate);
 	this.slidesWrapper.update(speed, direction);
-	// this.itemsContainer.changeDelta(delta);
+	this.itemsContainer.update(speed, direction);
 };
 
 var move = function move(beforeSlide, nextSlide) {
@@ -247,7 +238,7 @@ var parallaxOnePage = function () {
 		key: 'setEnable',
 		value: function setEnable() {
 			this.bounceDeltaEmulator.enable();
-			// this.itemsContainer.enable();
+			this.itemsContainer.enable();
 			this.enable = true;
 		}
 	}, {
@@ -255,7 +246,7 @@ var parallaxOnePage = function () {
 		value: function setDisable() {
 			console.log(this.bounceDeltaEmulator);
 			this.bounceDeltaEmulator.disable();
-			// this.itemsContainer.disable();
+			this.itemsContainer.disable();
 			this.enable = false;
 		}
 	}]);
@@ -266,7 +257,7 @@ var parallaxOnePage = function () {
 		this.enable = true;
 		this.settings = (0, _extend2.default)(defaults, options);
 		this.slidesWrapper = new _SlidesWrapper2.default(this.settings, move);
-		// this.itemsContainer = new ItemsContainer(this.settings);
+		this.itemsContainer = new _ItemsContainer2.default(this.settings);
 		this.bounceDeltaEmulator = new _AccelerateCounter2.default(window, onScroll.bind(this));
 
 		this.setEnable.call(this);
@@ -279,12 +270,12 @@ window.getParallaxOnePage = function (config) {
 	return new parallaxOnePage(config);
 };
 
-},{"./modules/AccelerateCounter.js":4,"./modules/SlidesWrapper.js":5,"./utils/extend.js":6}],4:[function(require,module,exports){
+},{"./modules/AccelerateCounter.js":4,"./modules/ItemsContainer.js":6,"./modules/SlidesWrapper.js":7,"./utils/extend.js":8}],4:[function(require,module,exports){
 
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+   value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -294,112 +285,250 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var timer = null;
 
 var ACCELERATION = 1;
-var MAX_SPEED = 40;
-var WIND = 0.8;
+var MAX_SPEED = 120;
+var WIND = 1.8;
 
-var calcSpeed = function calcSpeed() {
-  var state;
+var getCurrentState = function getCurrentState() {
 
-  var SpeedAbs = Math.abs(this.currSpeed);
+   var speedAbs = Math.abs(this.currSpeed);
 
-  var acceleration = ACCELERATION * Math.abs(this.currentDelta);
+   // console.log(this.currSpeed);
 
-  if (Math.abs(this.currSpeed) < 0.2) {
-    this.currSpeed = 0;
-  }
+   if (this.scrolling && speedAbs < MAX_SPEED) {
+      return this.direction === 'UP' ? 'SCROLLING_UP' : 'SCROLLING_DOWN';
+   }
 
-  if (this.scrolling && Math.abs(this.currSpeed) < MAX_SPEED) {
-    state = 'accelerating';
-    if (this.direction === 'up') {
-      this.currSpeed = this.currSpeed + acceleration;
-    } else {
-      this.currSpeed = this.currSpeed - acceleration;
-    }
-  } else if (Math.abs(this.currSpeed) > 0.2) {
-    state = 'move back';
+   // if( this.scrolling && (speedAbs > (MAX_SPEED - 3)) ){
+   //    return this.direction === 'UP' ? 'MAX_UP' : 'MAX_DOWN';
+   // }
 
-    if (Math.abs(this.currSpeed) < 0.6) {
-      this.currSpeed = 0;
-    }
+   // console.log(speedAbs);
 
-    this.direction = this.currSpeed > 0 ? 'down' : 'up';
-    if (this.direction === 'up') {
-      this.currSpeed = this.currSpeed + WIND;
-    } else {
-      this.currSpeed = this.currSpeed - WIND;
-    }
-  } else {
-    state = 'idle';
-    this.currSpeed = 0;
-  }
+   if (!this.scrolling && this.direction === 'DOWN' && this.currSpeed > 0) {
+      return 'MOVE_BACK_UP';
+   }
 
-  // console.log(`Statee : ${state}; Directon ${this.direction}; Speed: ${this.currSpeed}; SpeedAbs: ${SpeedAbs}`);
+   if (!this.scrolling && this.direction === 'UP' && this.currSpeed < 0) {
+      return 'MOVE_BACK_DOWN';
+   }
+
+   return 'IDLE';
+};
+
+var calcSpeed = function calcSpeed(state) {
+
+   // console.log(state);
+   this.acceleration = ACCELERATION * Math.abs(this.currentDelta);
+
+   switch (state) {
+      case 'SCROLLING_UP':
+         this.currSpeed = this.currSpeed + this.acceleration;break;
+      case 'SCROLLING_DOWN':
+         this.currSpeed = this.currSpeed - this.acceleration;break;
+      case 'MOVE_BACK_UP':
+         this.currSpeed = this.currSpeed - WIND;break;
+      case 'MOVE_BACK_DOWN':
+         this.currSpeed = this.currSpeed + WIND;break;
+      case 'SCROLLING_MAX_UP':
+         this.currSpeed = MAX_SPEED;break;
+      case 'SCROLLING_MAX_DOWN':
+         this.currSpeed = -MAX_SPEED;break;
+   }
 };
 
 var tick = function tick() {
-  if (!this.active) {
-    return;
-  }
+   if (!this.active) {
+      return;
+   }
 
-  var lastSpeed = this.currSpeed;
-  calcSpeed.call(this);
+   var state = getCurrentState.call(this);
 
-  // if( (Math.abs(lastSpeed) - Math.abs(this.currSpeed)) < 0.5){
-  // } else {
-  // 	this.callback(this.currSpeed);	
-  // }
+   calcSpeed.call(this, state);
 
-  this.callback(this.currSpeed, this.direction);
+   // if(state !== 'IDLE'){
+   this.callback(this.currSpeed, this.direction);
+   // }
 
-  window.requestAnimationFrame(tick.bind(this));
+   window.requestAnimationFrame(tick.bind(this));
 };
 
 var setNotScrolling = function setNotScrolling() {
-  this.scrolling = false;
+   this.scrolling = false;
+   this.direction = this.currSpeed > 0 ? 'DOWN' : 'UP';
 };
 
 var onScroll = function onScroll(event, delta) {
-  this.scrolling = true;
-  this.direction = delta > 0 ? 'up' : 'down';
-  this.currentDelta = delta;
+   this.scrolling = true;
+   this.direction = delta > 0 ? 'UP' : 'DOWN';
+   this.currentDelta = delta;
 
-  clearTimeout(timer);
-  timer = setTimeout(setNotScrolling.bind(this), 100);
+   if (this.currentDelta > 100) {
+      this.currentDelta = this.currentDelta / 1000;
+   } else if (this.currentDelta > 100) {
+      this.currentDelta = this.currentDelta / 100;
+   } else if (this.currentDelta > 10) {
+      this.currentDelta = this.currentDelta / 10;
+   }
+
+   console.log(this.currentDelta);
+
+   clearTimeout(timer);
+   timer = setTimeout(setNotScrolling.bind(this), 140);
 };
 
 var _class = function () {
+   _createClass(_class, [{
+      key: 'disable',
+      value: function disable() {
+         this.active = false;
+         // Hamster(this.el).unwheel(onScroll.bind(this));
+      }
+   }, {
+      key: 'enable',
+      value: function enable() {
+         Hamster(this.el).wheel(onScroll.bind(this));
+         this.active = true;
+         tick.call(this);
+      }
+   }]);
+
+   function _class(el, callback) {
+      _classCallCheck(this, _class);
+
+      this.el = el;
+      this.callback = callback;
+      this.scrolling = false;
+      this.currSpeed = 0;
+      this.direction = 'up';
+      this.active = true;
+   }
+
+   return _class;
+}();
+
+exports.default = _class;
+
+},{}],5:[function(require,module,exports){
+'use strict';
+
+// import AnimationManager from './../animations/AnimationManager.js';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _ParallaxAnimation = require('./../animations/ParallaxAnimation.js');
+
+var _ParallaxAnimation2 = _interopRequireDefault(_ParallaxAnimation);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _class = function () {
   _createClass(_class, [{
-    key: 'disable',
-    value: function disable() {
-      this.active = false;
-      // Hamster(this.el).unwheel(onScroll.bind(this));
-    }
-  }, {
     key: 'enable',
     value: function enable() {
-      Hamster(this.el).wheel(onScroll.bind(this));
-      this.active = true;
-      tick.call(this);
+      console.log('enable item');
+      this.ParallaxAnimationInst.enable();
+    }
+  }, {
+    key: 'disable',
+    value: function disable() {
+      this.ParallaxAnimationInst.disable();
     }
   }]);
 
-  function _class(el, callback) {
+  function _class(el, bounce) {
     _classCallCheck(this, _class);
 
     this.el = el;
-    this.callback = callback;
-    this.scrolling = false;
-    this.currSpeed = 0;
-    this.direction = 'up';
-    this.active = true;
+    this.bounce = bounce;
+    this.ParallaxAnimationInst = new _ParallaxAnimation2.default(el, bounce, function () {});
   }
+
+  _createClass(_class, [{
+    key: 'update',
+    value: function update(speed, direction) {
+      this.ParallaxAnimationInst.update(speed, direction);
+    }
+  }]);
 
   return _class;
 }();
 
 exports.default = _class;
 
-},{}],5:[function(require,module,exports){
+},{"./../animations/ParallaxAnimation.js":2}],6:[function(require,module,exports){
+
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Item = require('./Item.js');
+
+var _Item2 = _interopRequireDefault(_Item);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var parseItem = function parseItem(el) {
+  var bounce = parseFloat(el.dataset.parallaxBounce);
+  this.items.push(new _Item2.default(el, bounce));
+};
+
+var getItems = function getItems() {
+  var items = this.config.wrapper.querySelectorAll('[data-parallax-bounce]');
+  Array.prototype.forEach.call(items, parseItem.bind(this));
+};
+
+var _class = function () {
+  _createClass(_class, [{
+    key: 'enable',
+    value: function enable() {
+      this.items.forEach(function (item) {
+        return item.enable();
+      });
+    }
+  }, {
+    key: 'disable',
+    value: function disable() {
+      this.items.forEach(function (item) {
+        return item.disable();
+      });
+    }
+  }]);
+
+  function _class(config) {
+    _classCallCheck(this, _class);
+
+    this.config = config;
+    this.items = [];
+    getItems.call(this);
+  }
+
+  _createClass(_class, [{
+    key: 'update',
+    value: function update(delta, direction) {
+      this.items.forEach(function (item) {
+        return item.update(delta, direction);
+      });
+    }
+  }]);
+
+  return _class;
+}();
+
+exports.default = _class;
+
+},{"./Item.js":5}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -420,10 +549,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var detectSlideChange = function detectSlideChange(direction) {
-	console.log(direction);
-
-	var func = direction == 'up' ? this.moveDown : this.moveUp;
+var detectSlideChange = function detectSlideChange(speed, direction) {
+	var func = direction === 'UP' ? this.moveDown : this.moveUp;
 	func.call(this);
 };
 
@@ -473,8 +600,6 @@ var _class = function () {
 			var newOffset = (id - 1) * window.innerHeight * -1;
 			this.ParallaxAnimationInst.disable();
 
-			console.log('disable');
-
 			this.BeetweenSlidesAnimationInst.animateTo(newOffset, this.config.slideAnimationTime, afterMove.bind(this));
 		}
 	}]);
@@ -497,8 +622,8 @@ var _class = function () {
 
 	_createClass(_class, [{
 		key: 'update',
-		value: function update(delta, direction) {
-			this.ParallaxAnimationInst.update(delta);
+		value: function update(speed, direction) {
+			this.ParallaxAnimationInst.update(speed, direction);
 		}
 	}]);
 
@@ -507,7 +632,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{"./../animations/AnimationManager.js":1,"./../animations/ParallaxAnimation.js":2}],6:[function(require,module,exports){
+},{"./../animations/AnimationManager.js":1,"./../animations/ParallaxAnimation.js":2}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

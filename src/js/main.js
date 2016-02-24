@@ -2,7 +2,7 @@
 'use strict';
 
 import SlidesWrapper from './modules/SlidesWrapper.js';
-// import ItemsContainer from './modules/ItemsContainer.js';
+import ItemsContainer from './modules/ItemsContainer.js';
 import AcceleratorCounter from './modules/AccelerateCounter.js';
 import extend from './utils/extend.js';
 
@@ -15,7 +15,7 @@ const defaults = {
 var onScroll = function(speed, direction){
 	// console.log(accelerate);
 	this.slidesWrapper.update(speed, direction);
-	// this.itemsContainer.changeDelta(delta);
+	this.itemsContainer.update(speed, direction);
 };
 
 var move = function(beforeSlide, nextSlide){
@@ -42,14 +42,14 @@ class parallaxOnePage {
 
 	setEnable(){
 		this.bounceDeltaEmulator.enable();
-		// this.itemsContainer.enable();
+		this.itemsContainer.enable();
 		this.enable = true;
 	}
 
 	setDisable(){
 		console.log(this.bounceDeltaEmulator);
 		this.bounceDeltaEmulator.disable();
-		// this.itemsContainer.disable();
+		this.itemsContainer.disable();
 		this.enable = false;
 	}
 
@@ -57,7 +57,7 @@ class parallaxOnePage {
 		this.enable = true;
 	 	this.settings = extend(defaults, options);
 	 	this.slidesWrapper = new SlidesWrapper(this.settings, move);
-	 	// this.itemsContainer = new ItemsContainer(this.settings);
+	 	this.itemsContainer = new ItemsContainer(this.settings);
 	 	this.bounceDeltaEmulator = new AcceleratorCounter(window, onScroll.bind(this));
 
 	 	this.setEnable.call(this); 	

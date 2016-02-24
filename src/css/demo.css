@@ -1,8 +1,6 @@
 
 div#scroll-wrapper section {
 	.item {
-	
-		background: #fff;
 		position: absolute;
 		left: 50%;
 		top: 50%;
@@ -15,6 +13,15 @@ div#scroll-wrapper section {
 			height: 200px;
 			margin-left: -300px;
 			margin-top: -120px;
+			background: #fff;
+		}
+
+		&:nth-of-type(2){
+			background: yellow;
+			width: 400px;
+			height: 40px;
+			margin-left: -350px;
+			margin-top: -150px;
 		}
 
 	}

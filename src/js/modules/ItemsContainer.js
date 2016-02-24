@@ -16,21 +16,21 @@ var getItems = function(){
 export default class {
   
    enable(){
-      // this.items.forEach((item) => item.enable());
+      this.items.forEach((item) => item.enable());
    }
 
    disable(){
-      // this.items.forEach((item) => item.disable());
+      this.items.forEach((item) => item.disable());
    }
 
    constructor(config){
-  	  // this.config = config;
-  	  // this.items = [];
-  	  // getItems.call(this);
+  	  this.config = config;
+  	  this.items = [];
+  	  getItems.call(this);
    }
 
-   changeDelta(delta){
-  	  // this.items.forEach((item) => item.changeDelta(delta));
+   update(delta, direction){
+  	  this.items.forEach((item) => item.update(delta, direction));
    }
 
 }

@@ -21,8 +21,8 @@ export default class {
   		
     }
 
-    changeDelta(delta){
-  	    this.ParallaxAnimationInst.changeDelta(delta);
+    update(speed, direction){
+  	    this.ParallaxAnimationInst.update(speed, direction);
     }
 
 }

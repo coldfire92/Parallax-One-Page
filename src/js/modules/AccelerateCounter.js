@@ -4,90 +4,102 @@
 var timer = null; 
 
 const ACCELERATION = 1;
-const MAX_SPEED = 40;
-const WIND = 0.8;
+const MAX_SPEED = 120;
+const WIND = 1.8;
 
-var calcSpeed = function(){
-	var state;
+var getCurrentState = function(){
+    
+    var speedAbs = Math.abs(this.currSpeed);
 
-	var SpeedAbs = Math.abs(this.currSpeed);
+    // console.log(this.currSpeed);
+    
+    if( this.scrolling &&  speedAbs < MAX_SPEED ){
+        return this.direction === 'UP' ? 'SCROLLING_UP' : 'SCROLLING_DOWN';
+    } 
 
-	var acceleration = ACCELERATION * Math.abs(this.currentDelta);
-	
-	if( Math.abs(this.currSpeed) < 0.2 ){
-    	this.currSpeed = 0;
-    }
-  
-	if ( this.scrolling && Math.abs(this.currSpeed) < MAX_SPEED) {
-		state = 'accelerating';
-        if( this.direction === 'up'){
-        	this.currSpeed = this.currSpeed + acceleration;
-        } else {
-        	this.currSpeed = this.currSpeed - acceleration;
-        }
-    } else if( Math.abs(this.currSpeed) > 0.2 ) {
-    	state = 'move back';
+    // if( this.scrolling && (speedAbs > (MAX_SPEED - 3)) ){
+    //    return this.direction === 'UP' ? 'MAX_UP' : 'MAX_DOWN';
+    // }
 
-    	if(Math.abs(this.currSpeed) < 0.6){
-    		this.currSpeed = 0;
-    	}
- 
-    	this.direction = (this.currSpeed > 0 ) ? 'down' : 'up';
-    	if(this.direction === 'up'){
-    		this.currSpeed = this.currSpeed + WIND;
-	    } else {
-	    	this.currSpeed = this.currSpeed - WIND;
-	    } 
-    } else {
-    	state = 'idle';
-    	this.currSpeed = 0;
-    }
+    // console.log(speedAbs);
 
-    // console.log(`Statee : ${state}; Directon ${this.direction}; Speed: ${this.currSpeed}; SpeedAbs: ${SpeedAbs}`);
+    if( !this.scrolling && this.direction === 'DOWN' && this.currSpeed > 0) {
+       return 'MOVE_BACK_UP';
+    } 
+
+    if( !this.scrolling && this.direction === 'UP'  && this.currSpeed < 0) {
+       return 'MOVE_BACK_DOWN';
+    } 
+
+    return 'IDLE';
+};
+
+var calcSpeed = function(state){
+   
+   // console.log(state);
+   this.acceleration = ACCELERATION * Math.abs(this.currentDelta);
+
+   switch(state){
+      case 'SCROLLING_UP'   : this.currSpeed = this.currSpeed + this.acceleration; break;
+      case 'SCROLLING_DOWN' : this.currSpeed = this.currSpeed - this.acceleration; break;
+      case 'MOVE_BACK_UP'   : this.currSpeed = this.currSpeed - WIND; break;
+      case 'MOVE_BACK_DOWN' : this.currSpeed = this.currSpeed + WIND; break;
+      case 'SCROLLING_MAX_UP'         : this.currSpeed = MAX_SPEED; break;
+      case 'SCROLLING_MAX_DOWN'       : this.currSpeed = -MAX_SPEED; break;
+   }
 };
 
 var tick = function(){
-	if(!this.active){
-		return;
-	}
+	 if(!this.active){
+	 	  return;
+	 }
+    
+   var state = getCurrentState.call(this);
 
-	var lastSpeed = this.currSpeed;
-    calcSpeed.call(this);
+   calcSpeed.call(this,state);
 
-    // if( (Math.abs(lastSpeed) - Math.abs(this.currSpeed)) < 0.5){
-    // } else {
-   	// 	this.callback(this.currSpeed);	
-    // }
+   // if(state !== 'IDLE'){
+      this.callback(this.currSpeed, this.direction); 
+   // }
 
-    this.callback(this.currSpeed, this.direction);	
-
-	window.requestAnimationFrame(tick.bind(this));
+	 window.requestAnimationFrame(tick.bind(this));
 };
 
 var setNotScrolling = function(){
-	this.scrolling = false;
+	 this.scrolling = false;
+   this.direction = (this.currSpeed > 0) ? 'DOWN' : 'UP';
 };
 
 var onScroll = function(event, delta){
-	this.scrolling = true;
-	this.direction = (delta > 0) ? 'up' : 'down';
-	this.currentDelta = delta;
+	 this.scrolling = true;
+	 this.direction = (delta > 0) ? 'UP' : 'DOWN';
+	 this.currentDelta = delta;
 
-	clearTimeout(timer);
-	timer = setTimeout(setNotScrolling.bind(this), 100);
+   if( this.currentDelta > 100 ){
+      this.currentDelta = this.currentDelta / 1000;
+   } else if( this.currentDelta > 100){
+      this.currentDelta = this.currentDelta / 100;
+   } else if( this.currentDelta > 10 ){
+      this.currentDelta = this.currentDelta / 10;
+   }
+
+   console.log(this.currentDelta);
+
+	 clearTimeout(timer);
+	 timer = setTimeout(setNotScrolling.bind(this), 140);
 };
 
 export default class {
 
 	disable(){
-		this.active = false;
-		// Hamster(this.el).unwheel(onScroll.bind(this));
+		 this.active = false;
+		 // Hamster(this.el).unwheel(onScroll.bind(this));
 	}
 
 	enable(){
-		Hamster(this.el).wheel(onScroll.bind(this));
-		this.active = true;
-		tick.call(this);
+		 Hamster(this.el).wheel(onScroll.bind(this));
+		 this.active = true;
+		 tick.call(this);
 	}
   
     constructor(el, callback){

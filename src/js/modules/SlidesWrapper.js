@@ -3,10 +3,8 @@
 import AnimationManager from './../animations/AnimationManager.js';
 import ParallaxAnimation from './../animations/ParallaxAnimation.js';
 
-var detectSlideChange = function(direction){
-	console.log(direction);
-	
-	var func = (direction == 'up') ? this.moveDown : this.moveUp;
+var detectSlideChange = function(speed, direction){
+	var func = (direction === 'UP') ? this.moveDown : this.moveUp;
 	func.call(this);
 };
 
@@ -51,8 +49,6 @@ export default class {
 		var newOffset = (id - 1) * window.innerHeight * -1;
 		this.ParallaxAnimationInst.disable();
 
-		console.log('disable');
-		
 		this.BeetweenSlidesAnimationInst.animateTo( 
 			newOffset, 
 			this.config.slideAnimationTime, 
@@ -74,7 +70,7 @@ export default class {
   	    this.moveCollback = moveCollback;
     }
 
-    update(delta, direction){
-	 	this.ParallaxAnimationInst.update(delta);
+    update(speed, direction){
+	 	this.ParallaxAnimationInst.update(speed, direction);
     }
 }

@@ -3,15 +3,6 @@
 
 import AnimationManager from './AnimationManager.js';
 
-var setNewDelta = function(delta){
-
-   // if( Math.abs(this.currentDelta) <= Math.abs(delta) ){
-      this.currentDelta = delta;
-   // }
-
-    // console.log(`Current delta: ${delta}, delta saved for animation ${this.currentDelta}`);
-};
-
 export default class {
   
   changeGlobalTranslate(offset){
@@ -65,15 +56,12 @@ export default class {
   		return;
   	}
 
-
     var relativeY = Math.floor(speed * this.bounce, 2);
 
-    console.log(direction);
-    
-    if(Math.abs(relativeY) > 90 && this.max){
-       this.afterIncreaseMaxCallback(relativeY, direction);
-       return;
-    }
+    // if(Math.abs(relativeY) > 90 && this.max){
+    //    this.afterIncreaseMaxCallback(relativeY, direction);
+    //    return;
+    // }
 
     var y = relativeY + this.transYGlobal; 
     
