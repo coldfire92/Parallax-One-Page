@@ -1,9 +1,12 @@
 'use strict';
 
-import AnimationManager from './AnimationManager.js';
-import ParallaxAnimation from './ParallaxAnimation.js';
+import AnimationManager from './../animations/AnimationManager.js';
+import ParallaxAnimation from './../animations/ParallaxAnimation.js';
 
 var detectSlideChange = function(relativeDelta){
+
+	console.log(relativeDelta);
+	
 	var func = (relativeDelta < 0) ? this.moveDown : this.moveUp;
 	func.call(this);
 };
@@ -50,18 +53,18 @@ export default class {
 		this.ParallaxAnimationInst.disable();
 		
 		this.BeetweenSlidesAnimationInst.animateTo( 
-			this.ParallaxAnimationInst.getCurrentOffset(), 
 			newOffset, 
-			19.234, 
+			this.config.slideAnimationTime, 
 			afterMove.bind(this)
 		);
 	}
 
     constructor(config, moveCollback){
   	    this.config = config;
+  	    
   	    this.BeetweenSlidesAnimationInst = new AnimationManager(config.wrapper);
-  	    this.ParallaxAnimationInst = new ParallaxAnimation(config.wrapper, detectSlideChange.bind(this));
-  
+  	    this.ParallaxAnimationInst = new ParallaxAnimation(config.wrapper, this.config.bounceWrapper);
+  		this.ParallaxAnimationInst.setMaxOffset(detectSlideChange.bind(this), this.config.maxParralaxWrapper);
   	    this.currentMouseDelta = 0;
   	    
   	    // Slide Animation
@@ -71,10 +74,6 @@ export default class {
     }
 
     changeDelta(delta){
-
-
-    	// console.log(delta);
-    	
 	 	if(!this.BeetweenSlidesAnimationInst.isAnimation()){
 	 		this.ParallaxAnimationInst.changeDelta(delta);
 	 	}

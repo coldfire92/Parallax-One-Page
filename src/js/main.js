@@ -1,18 +1,21 @@
 
 'use strict';
 
-import SlidesWrapper from './modules/SlidesWrapper.js';
-import ItemsContainer from './modules/ItemsContainer.js';
+// import SlidesWrapper from './modules/SlidesWrapper.js';
+// import ItemsContainer from './modules/ItemsContainer.js';
 import BounceDeltaEmulator from './modules/BounceDeltaEmulator.js';
 import extend from './utils/extend.js';
 
 const defaults = {
-	var2 : 'aaa',
-	var3 : 'sss'
+	bounceWrapper : 20.14,
+	maxParralaxWrapper : 100,
+	slideAnimationTime : 900
 };
 
 var onScroll = function(delta){
-	this.slidesWrapper.changeDelta(delta);
+	console.log(delta);
+	// this.slidesWrapper.changeDelta(delta);
+	// this.itemsContainer.changeDelta(delta);
 };
 
 var move = function(beforeSlide, nextSlide){
@@ -31,19 +34,21 @@ class parallaxOnePage {
 
 	setEnable(){
 		this.bounceDeltaEmulator.enable();
+		// this.itemsContainer.enable();
 		this.enable = true;
 	}
 
 	setDisable(){
 		this.bounceDeltaEmulator.disable();
+		// this.itemsContainer.disable();
 		this.enable = false;
 	}
 
 	constructor(options){
 		this.enable = true;
 	 	this.settings = extend(defaults, options);
-	 	this.slidesWrapper = new SlidesWrapper(this.settings, move);
-	 	this.itemsContainer = new ItemsContainer(this.settings);
+	 	// this.slidesWrapper = new SlidesWrapper(this.settings, move);
+	 	// this.itemsContainer = new ItemsContainer(this.settings);
 	 	this.bounceDeltaEmulator = new BounceDeltaEmulator(window, onScroll.bind(this));
 
 	 	this.setEnable(); 	

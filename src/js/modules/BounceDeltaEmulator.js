@@ -1,40 +1,72 @@
 
 'use strict';
 
-var onScroll = function(event){
-	var delta = 0;
+var timer = null;
+var currentDelta = 0;
+var lastStateDelta = 0;
+var returnAnimation = false;
 
-	if (event.wheelDelta) {
-        // IE and Opera
-        delta = event.wheelDelta / 10; 
-    } else if (event.detail) {
-        // W3C
-        delta = -event.detail / 2;
-    }
 
-    if(Math.abs(delta) < 2){
-		delta = delta * 10;
-	} 
+var startReturnAnimation = function(){
+	returnAnimation = true;
+};
 
-	console.log(delta);
-	this.callback(delta);
+var calcReturnDelta = function(){
+	var calcDelta = Math.floor(currentDelta) * 10;
+	this.callback(calcDelta);
+};
+
+var animateBounce = function(){
+
+	if(startReturnAnimation){
+		
+		if(currentDelta > 0){
+			currentDelta -= 0.12;
+		} else {
+			currentDelta += 0.12;
+		}
+	
+		if(Math.abs(currentDelta) < 0.5){
+			currentDelta = 0;
+			returnAnimation = false;
+		}
+	}
+
+	calcReturnDelta.call(this);
+
+	window.requestAnimationFrame(animateBounce.bind(this));
+};
+
+var onScroll = function(event, delta, deltaX, deltaY){
+	// console.log(`Delta: ${delta}; DeltaY: ${deltaY}`);
+	
+	if(Math.abs(delta) > 50 && Math.abs(delta) < 100){
+		delta/=10;
+	};
+
+	if(Math.abs(delta) >= 100){
+		delta/=100;
+	};
+
+	currentDelta = delta;
+
+	clearTimeout(timer);
+	timer = setTimeout(startReturnAnimation, 120);
 };
 
 export default class {
 
-
 	disable(){
-		this.el.removeEventListener('wheel', onScroll.bind(this), false);
-		this.el.removeEventListener('DOMMouseScroll', onScroll.bind(this), false);	
+		Hamster(this.el).unwheel(onScroll.bind(this));
 	}
 
 	enable(){
-		this.el.addEventListener('wheel', onScroll.bind(this), false);
-		this.el.addEventListener('DOMMouseScroll', onScroll.bind(this), false);	
+		Hamster(this.el).wheel(onScroll.bind(this));
 	}
   
     constructor(el, callback){
   	   this.el = el;
   	   this.callback = callback;
+  	   animateBounce.call(this);
    }
 }

@@ -1,0 +1,23 @@
+
+div#scroll-wrapper section {
+	.item {
+	
+		background: #fff;
+		position: absolute;
+		left: 50%;
+		top: 50%;
+	}
+
+	&[data-name="first"] .item {
+
+		&:nth-of-type(1){
+			width: 400px;
+			height: 200px;
+			margin-left: -300px;
+			margin-top: -120px;
+		}
+
+	}
+
+
+}
