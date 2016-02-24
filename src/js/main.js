@@ -1,20 +1,20 @@
 
 'use strict';
 
-// import SlidesWrapper from './modules/SlidesWrapper.js';
+import SlidesWrapper from './modules/SlidesWrapper.js';
 // import ItemsContainer from './modules/ItemsContainer.js';
-import BounceDeltaEmulator from './modules/BounceDeltaEmulator.js';
+import AcceleratorCounter from './modules/AccelerateCounter.js';
 import extend from './utils/extend.js';
 
 const defaults = {
-	bounceWrapper : 20.14,
+	bounceWrapper : 2.14,
 	maxParralaxWrapper : 100,
 	slideAnimationTime : 900
 };
 
-var onScroll = function(delta){
-	console.log(delta);
-	// this.slidesWrapper.changeDelta(delta);
+var onScroll = function(speed, direction){
+	// console.log(accelerate);
+	this.slidesWrapper.update(speed, direction);
 	// this.itemsContainer.changeDelta(delta);
 };
 
@@ -32,6 +32,14 @@ class parallaxOnePage {
 
 	}
 
+	toggleEnable(){
+		if(this.enable) {
+			this.setDisable();
+		} else {
+			this.setEnable();
+		}
+	}
+
 	setEnable(){
 		this.bounceDeltaEmulator.enable();
 		// this.itemsContainer.enable();
@@ -39,6 +47,7 @@ class parallaxOnePage {
 	}
 
 	setDisable(){
+		console.log(this.bounceDeltaEmulator);
 		this.bounceDeltaEmulator.disable();
 		// this.itemsContainer.disable();
 		this.enable = false;
@@ -47,11 +56,11 @@ class parallaxOnePage {
 	constructor(options){
 		this.enable = true;
 	 	this.settings = extend(defaults, options);
-	 	// this.slidesWrapper = new SlidesWrapper(this.settings, move);
+	 	this.slidesWrapper = new SlidesWrapper(this.settings, move);
 	 	// this.itemsContainer = new ItemsContainer(this.settings);
-	 	this.bounceDeltaEmulator = new BounceDeltaEmulator(window, onScroll.bind(this));
+	 	this.bounceDeltaEmulator = new AcceleratorCounter(window, onScroll.bind(this));
 
-	 	this.setEnable(); 	
+	 	this.setEnable.call(this); 	
 	}
 }
 
