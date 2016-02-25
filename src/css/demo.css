@@ -4,9 +4,68 @@ div#scroll-wrapper section {
 		position: absolute;
 		left: 50%;
 		top: 50%;
+		opacity : 0;
+
+		&.direction-up {
+			transform: translate(0,-300px);
+		}
+
+		&.direction-down {
+			transform: translate(0,300px);
+		}
+
+		&.animate-show {
+			transition: all 700ms;	
+		}
+
+		&.show {
+			opacity: 1;	
+			transform: translate(0, 0);
+		}
+
 	}
 
 	&[data-name="first"] .item {
+
+		&:nth-of-type(1){
+			width: 400px;
+			height: 200px;
+			margin-left: -300px;
+			margin-top: -120px;
+			background: #fff;
+		}
+
+		&:nth-of-type(2){
+			background: yellow;
+			width: 400px;
+			height: 40px;
+			margin-left: -350px;
+			margin-top: -150px;
+		}
+
+	}
+
+	&[data-name="second"] .item {
+
+		&:nth-of-type(1){
+			width: 400px;
+			height: 200px;
+			margin-left: -300px;
+			margin-top: -120px;
+			background: #fff;
+		}
+
+		&:nth-of-type(2){
+			background: yellow;
+			width: 400px;
+			height: 40px;
+			margin-left: -350px;
+			margin-top: -150px;
+		}
+
+	}
+
+	&[data-name="third"] .item {
 
 		&:nth-of-type(1){
 			width: 400px;

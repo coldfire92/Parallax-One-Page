@@ -1,43 +1,78 @@
 'use strict';
 
-import AnimationManager from './../animations/AnimationManager.js';
 import ParallaxAnimation from './../animations/ParallaxAnimation.js';
 
+const animationDirections = {
+	'SLIDE_UP' : {
+		condition : '>',
+		'sign' : '+'
+	},
+	'SLIDE_DOWN' : {
+		condition : '<',
+		'sign' : '-'
+	}
+};
+
+var blockedSlideDetect = false;
 var detectSlideChange = function(speed, direction){
-	var func = (direction === 'UP') ? this.moveDown : this.moveUp;
+	if(blockedSlideDetect){
+		return;
+	}
+
+	blockedSlideDetect = true;
+	setTimeout(()=> blockedSlideDetect = false, 2500);
+
+	var func = (direction === 'UP') ? this.slideUp : this.slideDown;
 	func.call(this);
 };
 
-var afterMove = function(offset){
-	this.ParallaxAnimationInst.changeGlobalTranslate(offset);
-	this.ParallaxAnimationInst.enable();
-	console.log('after move');
+var isFinish;
+
+var animateSlideChange = function(speed){
+
+	if(isFinish){
+		return;
+	}
+
+	eval(`this.currentOffset ${animationDirections[this.state].sign}=12`);	
+	eval(`isFinish = this.currentOffset ${animationDirections[this.state].condition} this.toScroll`);
+
+	if(isFinish){
+		this.ParallaxAnimationInst.changeGlobalTranslate(this.toScroll);
+		this.currentOffset = this.toScroll;
+		this.moveCollback((this.state === 'SLIDE_UP') ? this.currentPage+1 : this.currentPage-1 , this.currentPage);
+		isFinish = true;
+
+		setTimeout(function(){
+			this.state='PARALLAX';
+			isFinish = false;
+		}.bind(this), 1500);
+	} 
+
+	// console.log(`${this.currentOffset} / ${this.toScroll}`);
+	this.config.wrapper.style.transform = `translateY(${this.currentOffset}px)`;
 };
 
 export default class {
 
-	moveDown(){
-		if(this.BeetweenSlidesAnimationInst.isAnimation()){
-			return false;
-		}
-
+	slideDown(){
 		if(this.currentPage < this.pagesCount){
 			++this.currentPage;
-			this.move();
+			this.toScroll = (this.currentPage - 1) * window.innerHeight * -1;
+			this.currentOffset = this.ParallaxAnimationInst.getCurrentOffset();
+			this.state = 'SLIDE_DOWN';
 			return true;
 		}
 
 		return false;
 	}
 
-	moveUp(){
-		if(this.BeetweenSlidesAnimationInst.isAnimation()){
-			return false;
-		}
-
+	slideUp(){
 		if(this.currentPage!==1){
 			--this.currentPage;
-			this.move();
+			this.toScroll = (this.currentPage - 1) * window.innerHeight * -1;
+			this.currentOffset = this.ParallaxAnimationInst.getCurrentOffset();
+			this.state = 'SLIDE_UP';
 			return true;
 		} 
 
@@ -46,20 +81,10 @@ export default class {
 
 	move(id = this.currentPage){	
 		console.log('Move to: ' + id);
-		var newOffset = (id - 1) * window.innerHeight * -1;
-		this.ParallaxAnimationInst.disable();
-
-		this.BeetweenSlidesAnimationInst.animateTo( 
-			newOffset, 
-			this.config.slideAnimationTime, 
-			afterMove.bind(this)
-		);
 	}
 
     constructor(config, moveCollback){
   	    this.config = config;
-  	    
-  	    this.BeetweenSlidesAnimationInst = new AnimationManager(config.wrapper);
   	    this.ParallaxAnimationInst = new ParallaxAnimation(config.wrapper, this.config.bounceWrapper);
   		this.ParallaxAnimationInst.setMaxOffset(detectSlideChange.bind(this), this.config.maxParralaxWrapper);
   	    this.currentMouseDelta = 0;
@@ -68,9 +93,15 @@ export default class {
   	    this.currentPage = 1;
   	    this.pagesCount = 4;
   	    this.moveCollback = moveCollback;
+
+  	    this.state = 'PARALLAX';
     }
 
     update(speed, direction){
-	 	this.ParallaxAnimationInst.update(speed, direction);
+    	if(this.state === 'PARALLAX'){
+    		this.ParallaxAnimationInst.update(speed, direction);
+    	} else {
+    		animateSlideChange.call(this, speed);
+    	}
     }
 }

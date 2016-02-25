@@ -3,13 +3,12 @@
 
 import SlidesWrapper from './modules/SlidesWrapper.js';
 import ItemsContainer from './modules/ItemsContainer.js';
-import AcceleratorCounter from './modules/AccelerateCounter.js';
+import Ticker from './modules/Ticker.js';
 import extend from './utils/extend.js';
 
 const defaults = {
 	bounceWrapper : 2.14,
-	maxParralaxWrapper : 100,
-	slideAnimationTime : 900
+	maxParralaxWrapper : 70,
 };
 
 var onScroll = function(speed, direction){
@@ -18,8 +17,9 @@ var onScroll = function(speed, direction){
 	this.itemsContainer.update(speed, direction);
 };
 
-var move = function(beforeSlide, nextSlide){
-	console.log('Move ' + beforeSlide + ' after' + nextSlide);
+var slide = function(beforeSlide, nextSlide){
+	console.log('Move ' + beforeSlide + ' to' + nextSlide);
+	this.itemsContainer.slide(beforeSlide, nextSlide);
 };
 
 class parallaxOnePage {
@@ -41,14 +41,14 @@ class parallaxOnePage {
 	}
 
 	setEnable(){
-		this.bounceDeltaEmulator.enable();
+		this.tickerInst.enable();
 		this.itemsContainer.enable();
 		this.enable = true;
 	}
 
 	setDisable(){
 		console.log(this.bounceDeltaEmulator);
-		this.bounceDeltaEmulator.disable();
+		this.tickerInst.disable();
 		this.itemsContainer.disable();
 		this.enable = false;
 	}
@@ -56,9 +56,11 @@ class parallaxOnePage {
 	constructor(options){
 		this.enable = true;
 	 	this.settings = extend(defaults, options);
-	 	this.slidesWrapper = new SlidesWrapper(this.settings, move);
+	 	this.slidesWrapper = new SlidesWrapper(this.settings, slide.bind(this));
 	 	this.itemsContainer = new ItemsContainer(this.settings);
-	 	this.bounceDeltaEmulator = new AcceleratorCounter(window, onScroll.bind(this));
+	 	this.tickerInst = new Ticker(window, onScroll.bind(this));
+
+	 	slide.call(this,1,1);
 
 	 	this.setEnable.call(this); 	
 	}
