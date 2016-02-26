@@ -11,6 +11,26 @@
 	z-index: 99;
 }
 
+nav {
+	position: fixed;
+	height: 50px;
+	width: 100%;
+	background: #fff;
+	left: 0;
+	top: 0;
+	z-index: 99;
+
+	ul li {
+		display: inline-block;
+		// padding: 10px;
+		margin: 10px;
+		cursor: pointer;
+
+		&.active {
+			background: yellow;
+		}
+	}
+}
 
 div#scroll-wrapper section {
 
@@ -30,6 +50,14 @@ div#scroll-wrapper section {
 			height: 40px;
 			margin-left: -350px;
 			margin-top: -150px;
+		}
+
+		&.scroll-down {
+			background: white;
+			width: 40px;
+			height: 40px;
+			margin-left: -350px;
+			margin-top: -100px;
 		}
 
 	}

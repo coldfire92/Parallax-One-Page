@@ -218,24 +218,24 @@ var defaults = {
 	maxParralaxWrapper: 50,
 	beforeSlide: function beforeSlide() {},
 	afterSlide: function afterSlide() {},
-	whenStartShowHideAnimation: function whenStartShowHideAnimation() {}
+	startShowItemsAnimation: function startShowItemsAnimation() {}
 };
 
 var parallaxOnePage = function () {
 	_createClass(parallaxOnePage, [{
 		key: 'slideUp',
 		value: function slideUp() {
-			this.slidesWrapperInst.moveUp();
+			return this.slidesWrapperInst.slideUp();
 		}
 	}, {
 		key: 'slideDown',
 		value: function slideDown() {
-			this.slidesWrapperInst.moveDown();
+			return this.slidesWrapperInst.slideDown();
 		}
 	}, {
 		key: 'slideTo',
 		value: function slideTo(index) {
-			this.slidesWrapperInst.moveTo(index);
+			return this.slidesWrapperInst.slideTo(index);
 		}
 	}, {
 		key: 'toggleEnable',
@@ -267,10 +267,8 @@ var parallaxOnePage = function () {
 		this.settings = (0, _extend2.default)(defaults, options);
 
 		this.slidesWrapperInst = new _SlidesWrapper2.default(this.settings);
-
 		this.stateControllerInst = new _StateController2.default(this.settings);
 		this.stateControllerInst.onTick(this.slidesWrapperInst.update.bind(this.slidesWrapperInst));
-
 		this.slidesWrapperInst.beforeMove(this.stateControllerInst.resetSpeed.bind(this));
 
 		this.setEnable.call(this);
@@ -510,16 +508,16 @@ var detectSlideChange = function detectSlideChange(speed, direction) {
    ========================================================================== */
 
 var startShowAnimation = function startShowAnimation() {
-	console.log('startShowAnimation ' + this.beforeSlide + ' => ' + this.currentSlide);
+	this.config.startShowItemsAnimation(this.beforeSlide, this.currentSlide);
 	this.ItemContainer.slide(this.beforeSlide, this.currentSlide);
 };
 
 var afterSlideCallback = function afterSlideCallback() {
-	console.log('afterSlideCallback ' + this.beforeSlide + ' => ' + this.currentSlide);
+	this.config.afterSlide(this.beforeSlide, this.currentSlide);
 };
 
 var beforeSlideCallback = function beforeSlideCallback() {
-	console.log('beforeSlideCallback ' + this.beforeSlide + ' => ' + this.currentSlide);
+	this.config.beforeSlide(this.beforeSlide, this.currentSlide);
 	globalBeforeFn(this.beforeSlide, this.currentSlide);
 };
 
@@ -579,12 +577,8 @@ var _class = function () {
 		key: 'slideDown',
 		value: function slideDown() {
 			if (this.currentSlide < this.slidesCount) {
-				this.beforeSlide = this.currentSlide;
-				++this.currentSlide;
-				this.finishOffset = (this.currentSlide - 1) * window.innerHeight * -1;
-				this.currentOffset = this.ParallaxAnimationInst.getCurrentOffset();
-				this.state = 'SLIDE_DOWN';
-				beforeSlideCallback.call(this);
+				var id = this.currentSlide + 1;
+				this.slideTo(id);
 				return true;
 			}
 
@@ -594,12 +588,8 @@ var _class = function () {
 		key: 'slideUp',
 		value: function slideUp() {
 			if (this.currentSlide !== 1) {
-				this.beforeSlide = this.currentSlide;
-				--this.currentSlide;
-				this.finishOffset = (this.currentSlide - 1) * window.innerHeight * -1;
-				this.currentOffset = this.ParallaxAnimationInst.getCurrentOffset();
-				this.state = 'SLIDE_UP';
-				beforeSlideCallback.call(this);
+				var id = this.currentSlide - 1;
+				this.slideTo(id);
 				return true;
 			}
 
@@ -607,10 +597,18 @@ var _class = function () {
 		}
 	}, {
 		key: 'slideTo',
-		value: function slideTo() {
-			var id = arguments.length <= 0 || arguments[0] === undefined ? this.currentSlide : arguments[0];
+		value: function slideTo(id) {
+			if (id < 1 || id > this.slidesCount || this.state !== 'PARALLAX' || id == this.currentSlide) {
+				return false;
+			}
 
-			console.log('Move to: ' + id);
+			this.beforeSlide = this.currentSlide;
+			this.currentSlide = id;
+			this.finishOffset = (this.currentSlide - 1) * window.innerHeight * -1;
+			this.currentOffset = this.ParallaxAnimationInst.getCurrentOffset();
+			this.state = this.beforeSlide < this.currentSlide ? 'SLIDE_DOWN' : 'SLIDE_UP';
+			beforeSlideCallback.call(this);
+			return true;
 		}
 	}]);
 
@@ -618,9 +616,7 @@ var _class = function () {
 		_classCallCheck(this, _class);
 
 		this.config = config;
-
 		this.ItemContainer = new _ItemsContainer2.default(config);
-
 		this.ParallaxAnimationInst = new _ParallaxAnimation2.default(config.wrapper, this.config.bounceWrapper);
 		this.ParallaxAnimationInst.setMaxOffset(detectSlideChange.bind(this), this.config.maxParralaxWrapper);
 

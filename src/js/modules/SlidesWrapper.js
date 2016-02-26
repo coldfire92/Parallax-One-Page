@@ -33,16 +33,16 @@ var detectSlideChange = function(speed, direction){
    ========================================================================== */
 
 var startShowAnimation = function(){
-	console.log(`startShowAnimation ${this.beforeSlide} => ${this.currentSlide}`);
+	this.config.startShowItemsAnimation(this.beforeSlide, this.currentSlide);
 	this.ItemContainer.slide(this.beforeSlide, this.currentSlide);
 };
 
 var afterSlideCallback = function(){
-	console.log(`afterSlideCallback ${this.beforeSlide} => ${this.currentSlide}`);	
+	this.config.afterSlide(this.beforeSlide, this.currentSlide);
 };
 
 var beforeSlideCallback = function(){
-	console.log(`beforeSlideCallback ${this.beforeSlide} => ${this.currentSlide}`);
+	this.config.beforeSlide(this.beforeSlide, this.currentSlide);
 	globalBeforeFn(this.beforeSlide, this.currentSlide);
 };
 
@@ -100,12 +100,8 @@ export default class {
 
 	slideDown(){
 		if(this.currentSlide < this.slidesCount){
-			this.beforeSlide = this.currentSlide;
-			++this.currentSlide;
-			this.finishOffset = (this.currentSlide - 1) * window.innerHeight * -1;
-			this.currentOffset = this.ParallaxAnimationInst.getCurrentOffset();
-			this.state = 'SLIDE_DOWN';
-			beforeSlideCallback.call(this);
+			var id = this.currentSlide + 1;
+			this.slideTo(id);
 			return true;
 		}
 
@@ -114,27 +110,31 @@ export default class {
 
 	slideUp(){
 		if(this.currentSlide!==1){
-			this.beforeSlide = this.currentSlide;
-			--this.currentSlide;
-			this.finishOffset = (this.currentSlide - 1) * window.innerHeight * -1;
-			this.currentOffset = this.ParallaxAnimationInst.getCurrentOffset();	
-			this.state = 'SLIDE_UP';
-			beforeSlideCallback.call(this);
+			var id = this.currentSlide - 1;
+			this.slideTo(id);
 			return true;
 		} 
 
 		return false;
 	}
 
-	slideTo(id = this.currentSlide){	
-		console.log('Move to: ' + id);
+	slideTo(id){	
+		if(id < 1 || id > this.slidesCount || this.state !== 'PARALLAX' || id == this.currentSlide) {
+			return false;
+		}
+
+		this.beforeSlide = this.currentSlide;
+		this.currentSlide = id;
+		this.finishOffset = (this.currentSlide - 1) * window.innerHeight * -1;
+		this.currentOffset = this.ParallaxAnimationInst.getCurrentOffset();	
+		this.state = (this.beforeSlide < this.currentSlide) ?  'SLIDE_DOWN' : 'SLIDE_UP';
+		beforeSlideCallback.call(this);
+		return true;
 	}
 
     constructor(config){
   	    this.config = config;
-  	
   	    this.ItemContainer = new ItemsContainer(config);
-
   	    this.ParallaxAnimationInst = new ParallaxAnimation(config.wrapper, this.config.bounceWrapper);
   		this.ParallaxAnimationInst.setMaxOffset(detectSlideChange.bind(this), this.config.maxParralaxWrapper);
   	       

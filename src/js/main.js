@@ -10,21 +10,21 @@ const defaults = {
 	maxParralaxWrapper : 50,
 	beforeSlide : function(){},
 	afterSlide : function(){},
-	whenStartShowHideAnimation : function(){}
+	startShowItemsAnimation : function(){}
 };
 
 class parallaxOnePage {
   
 	slideUp(){
-		this.slidesWrapperInst.moveUp();
+		return this.slidesWrapperInst.slideUp();
 	}
 
 	slideDown(){
-		this.slidesWrapperInst.moveDown();
+		return this.slidesWrapperInst.slideDown();
 	}
 
 	slideTo(index){
-		this.slidesWrapperInst.moveTo(index);
+		return this.slidesWrapperInst.slideTo(index);
 	}
 
 	toggleEnable(){
@@ -50,10 +50,8 @@ class parallaxOnePage {
 	 	this.settings = extend(defaults, options);
 	 		
 	 	this.slidesWrapperInst = new SlidesWrapper(this.settings);
-
 	 	this.stateControllerInst = new StateController(this.settings);
 	 	this.stateControllerInst.onTick(this.slidesWrapperInst.update.bind(this.slidesWrapperInst));
-
 	 	this.slidesWrapperInst.beforeMove(this.stateControllerInst.resetSpeed.bind(this));
 
 	 	this.setEnable.call(this); 	
