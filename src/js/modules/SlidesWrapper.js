@@ -2,13 +2,7 @@
 
 import ParallaxAnimation from './../animations/ParallaxAnimation.js';
 import ItemsContainer from './ItemsContainer.js';
-
-var seconds = 0.5;
-var duration = 60 * seconds;
-
-var easeIn = function(t, b, c, d) {
-  return -c * (t /= d) * (t - 2) + b;
-};
+import Easings from './../utils/Easings.js';
 
 var isFinish,
 	callStartShowAnimationCallback = false,
@@ -24,7 +18,7 @@ var detectSlideChange = function(speed, direction){
 	}
 
 	blockedSlideDetect = true;
-	setTimeout(()=> blockedSlideDetect = false, 2500);
+	setTimeout(()=> blockedSlideDetect = false, this.config.timeBlockSlideDetectAfterDetect);
 	var func = (direction === 'UP') ? this.slideUp : this.slideDown;
 	func.call(this);
 };
@@ -55,7 +49,7 @@ var animateSlideChange = function(){
 	}
 	
 	if(!callStartShowAnimationCallback){
-		setTimeout(startShowAnimation.bind(this), 300);
+		setTimeout(startShowAnimation.bind(this), this.config.timeShowItemAfterStartSlide);
 		callStartShowAnimationCallback = true;
 	}
 
@@ -66,14 +60,10 @@ var animateSlideChange = function(){
 		isFinish = (absCurrentOffset > (absFinish - 1));
 		this.beginOffset = this.currentOffset;
     	this.changeOffset = this.finishOffset - this.beginOffset;
-    	// console.log(`Animate slide up from ${this.beginOffset} to ${this.finishOffset} with ${this.changeOffset} `);
-    	this.currentOffset = easeIn(1, this.beginOffset, this.changeOffset, duration);
 	} else {
 		isFinish = (absCurrentOffset < (absFinish + 1));
 		this.beginOffset = this.currentOffset;
     	this.changeOffset = Math.abs(this.finishOffset - this.beginOffset);
-    	// console.log(`Animate slide up from ${this.beginOffset} to ${this.finishOffset} with ${this.changeOffset} `);
-    	this.currentOffset = easeIn(1, this.beginOffset, this.changeOffset, duration);
 	}
 
 	if(isFinish){
@@ -84,11 +74,11 @@ var animateSlideChange = function(){
 			callStartShowAnimationCallback = false;
 			afterSlideCallback.call(this);
 			this.state='PARALLAX';
-		}.bind(this), 100);
+		}.bind(this), this.config.timeHoldAnimationAfterMove);
 		return;
 	} 
 
-	this.currentOffset = easeIn(1, this.beginOffset, this.changeOffset, duration);
+	this.currentOffset = Easings[this.config.easingSlideWrapper](1, this.beginOffset, this.changeOffset, this.config.animationDuration);
 	this.config.wrapper.style.transform = `translateY(${this.currentOffset}px)`;
 };
 
@@ -119,7 +109,7 @@ export default class {
 	}
 
 	slideTo(id){	
-		if(id < 1 || id > this.slidesCount || this.state !== 'PARALLAX' || id == this.currentSlide) {
+		if(id < 1 || id > this.slidesCount || this.state !== 'PARALLAX' || id === this.currentSlide) {
 			return false;
 		}
 
@@ -135,14 +125,14 @@ export default class {
     constructor(config){
   	    this.config = config;
   	    this.ItemContainer = new ItemsContainer(config);
-  	    this.ParallaxAnimationInst = new ParallaxAnimation(config.wrapper, this.config.bounceWrapper);
+  	    this.ParallaxAnimationInst = new ParallaxAnimation(config.wrapper, this.config.bounceWrapper, this.config);
   		this.ParallaxAnimationInst.setMaxOffset(detectSlideChange.bind(this), this.config.maxParralaxWrapper);
   	       
   	    // Slide Animation
   	    this.currentOffset = 0;
   	    this.currentSlide = 1;
   	    this.beforeSlide = 1;
-  	    this.slidesCount = 4;
+  	    this.slidesCount = this.config.slidesCounts;
   		this.state = 'PARALLAX';
 
   		this.ItemContainer.slide( this.beforeSlide, this.currentSlide); // aniamte current slide

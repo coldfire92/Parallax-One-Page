@@ -10,11 +10,11 @@ var parseItem = function(el, sectionIndex){
       showingDelay : el.dataset.showingDelay ? parseInt(el.dataset.showingDelay) : 5
   };
 
-	this.items.push( new Item(el, configItem, sectionIndex) );
+	this.items.push( new Item(el, this.config, configItem, sectionIndex) );
 };
 
 var getItems = function(){
-	var sections = this.config.wrapper.querySelectorAll('section');
+	var sections = this.config.sections;
   var self = this;
 	Array.prototype.forEach.call(sections, (section, index)=>{
       var items = section.querySelectorAll('[data-parallax-bounce]');

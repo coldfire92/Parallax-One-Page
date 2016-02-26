@@ -1,5 +1,4 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -8,19 +7,18 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _Easings = require('./../utils/Easings.js');
+
+var _Easings2 = _interopRequireDefault(_Easings);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var easeIn = function easeIn(t, b, c, d) {
-  return -c * (t /= d) * (t - 2) + b;
-};
-
-var seconds = 0.5;
-var duration = 60 * seconds;
 
 var animate = function animate() {
   this.beginOffset = this.currentOffset;
   this.changeOffset = this.finishOffset - this.beginOffset;
-  this.currentOffset = easeIn(1, this.beginOffset, this.changeOffset, duration);
+  this.currentOffset = _Easings2.default[this.config.easingSlideWrapper](1, this.beginOffset, this.changeOffset, this.config.animationDuration);
 
   if (Math.abs(this.currentOffset) < 0.1) {
     this.currentOffset = 0;
@@ -65,10 +63,11 @@ var _class = function () {
     }
   }]);
 
-  function _class(el, bounce) {
+  function _class(el, bounce, config) {
     _classCallCheck(this, _class);
 
     this.el = el;
+    this.config = config;
     this.active = true;
     this.bounce = bounce;
 
@@ -109,7 +108,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],2:[function(require,module,exports){
+},{"./../utils/Easings.js":8}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -214,8 +213,21 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var defaults = {
+	wrapper: document.createElement('div'),
+	sections: [],
 	bounceWrapper: 2.14,
 	maxParralaxWrapper: 50,
+	slidesCounts: 4,
+	easingSlideWrapper: 'easeIn',
+	animationDuration: 60 * 0.5,
+
+	timeHoldAnimationAfterMove: 100,
+	timeBlockSlideDetectAfterDetect: 2500,
+	timeShowItemAfterStartSlide: 300,
+
+	maxSpeedScrolling: 80, // all animations is currentScroll * bounce
+	moveBackAccellarate: 2.8, // all animations is currentScroll * bounce
+
 	beforeSlide: function beforeSlide() {},
 	afterSlide: function afterSlide() {},
 	startShowItemsAnimation: function startShowItemsAnimation() {}
@@ -264,11 +276,15 @@ var parallaxOnePage = function () {
 		_classCallCheck(this, parallaxOnePage);
 
 		this.enable = true;
+
 		this.settings = (0, _extend2.default)(defaults, options);
+		this.settings.sections = this.settings.wrapper.querySelectorAll('section');
+		this.settings.slidesCounts = this.settings.sections.length;
 
 		this.slidesWrapperInst = new _SlidesWrapper2.default(this.settings);
 		this.stateControllerInst = new _StateController2.default(this.settings);
 		this.stateControllerInst.onTick(this.slidesWrapperInst.update.bind(this.slidesWrapperInst));
+
 		this.slidesWrapperInst.beforeMove(this.stateControllerInst.resetSpeed.bind(this));
 
 		this.setEnable.call(this);
@@ -281,7 +297,7 @@ window.getParallaxOnePage = function (config) {
 	return new parallaxOnePage(config);
 };
 
-},{"./modules/SlidesWrapper.js":6,"./modules/StateController.js":7,"./utils/extend.js":8}],4:[function(require,module,exports){
+},{"./modules/SlidesWrapper.js":6,"./modules/StateController.js":7,"./utils/extend.js":9}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -322,13 +338,13 @@ var _class = function () {
 
 				setTimeout(function () {
 					this.el.classList.remove('animate-show');
-				}.bind(this), this.configItem.showingDelay + 690);
+				}.bind(this), this.configItem.showingDelay + this.timeShowItemAfterStartSlide);
 
 				setTimeout(function () {
 					this.ParallaxAnimationInst.enable();
 					this.el.classList.remove('direction-' + direction);
 					console.log('Finish show up animation');
-				}.bind(this), this.configItem.showingDelay + 710);
+				}.bind(this), this.configItem.showingDelay + this.timeShowItemAfterStartSlide + 20);
 			} else if (from === this.slideNumber) {
 				this.el.classList.remove('show');
 			}
@@ -345,15 +361,16 @@ var _class = function () {
 		}
 	}]);
 
-	function _class(el, configItem, slideNumber) {
+	function _class(el, mainConfig, configItem, slideNumber) {
 		_classCallCheck(this, _class);
 
 		console.log(slideNumber);
 		this.el = el;
+		this.mainConfig = mainConfig;
 		this.currentSlide = 1;
 		this.slideNumber = slideNumber;
 		this.configItem = configItem;
-		this.ParallaxAnimationInst = new _ParallaxAnimation2.default(el, this.configItem.bounce, function () {});
+		this.ParallaxAnimationInst = new _ParallaxAnimation2.default(el, this.configItem.bounce, mainConfig);
 	}
 
 	_createClass(_class, [{
@@ -395,11 +412,11 @@ var parseItem = function parseItem(el, sectionIndex) {
     showingDelay: el.dataset.showingDelay ? parseInt(el.dataset.showingDelay) : 5
   };
 
-  this.items.push(new _Item2.default(el, configItem, sectionIndex));
+  this.items.push(new _Item2.default(el, this.config, configItem, sectionIndex));
 };
 
 var getItems = function getItems() {
-  var sections = this.config.wrapper.querySelectorAll('section');
+  var sections = this.config.sections;
   var self = this;
   Array.prototype.forEach.call(sections, function (section, index) {
     var items = section.querySelectorAll('[data-parallax-bounce]');
@@ -472,16 +489,13 @@ var _ItemsContainer = require('./ItemsContainer.js');
 
 var _ItemsContainer2 = _interopRequireDefault(_ItemsContainer);
 
+var _Easings = require('./../utils/Easings.js');
+
+var _Easings2 = _interopRequireDefault(_Easings);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var seconds = 0.5;
-var duration = 60 * seconds;
-
-var easeIn = function easeIn(t, b, c, d) {
-	return -c * (t /= d) * (t - 2) + b;
-};
 
 var isFinish,
     callStartShowAnimationCallback = false,
@@ -499,7 +513,7 @@ var detectSlideChange = function detectSlideChange(speed, direction) {
 	blockedSlideDetect = true;
 	setTimeout(function () {
 		return blockedSlideDetect = false;
-	}, 2500);
+	}, this.config.timeBlockSlideDetectAfterDetect);
 	var func = direction === 'UP' ? this.slideUp : this.slideDown;
 	func.call(this);
 };
@@ -530,7 +544,7 @@ var animateSlideChange = function animateSlideChange() {
 	}
 
 	if (!callStartShowAnimationCallback) {
-		setTimeout(startShowAnimation.bind(this), 300);
+		setTimeout(startShowAnimation.bind(this), this.config.timeShowItemAfterStartSlide);
 		callStartShowAnimationCallback = true;
 	}
 
@@ -541,14 +555,10 @@ var animateSlideChange = function animateSlideChange() {
 		isFinish = absCurrentOffset > absFinish - 1;
 		this.beginOffset = this.currentOffset;
 		this.changeOffset = this.finishOffset - this.beginOffset;
-		// console.log(`Animate slide up from ${this.beginOffset} to ${this.finishOffset} with ${this.changeOffset} `);
-		this.currentOffset = easeIn(1, this.beginOffset, this.changeOffset, duration);
 	} else {
 		isFinish = absCurrentOffset < absFinish + 1;
 		this.beginOffset = this.currentOffset;
 		this.changeOffset = Math.abs(this.finishOffset - this.beginOffset);
-		// console.log(`Animate slide up from ${this.beginOffset} to ${this.finishOffset} with ${this.changeOffset} `);
-		this.currentOffset = easeIn(1, this.beginOffset, this.changeOffset, duration);
 	}
 
 	if (isFinish) {
@@ -559,11 +569,11 @@ var animateSlideChange = function animateSlideChange() {
 			callStartShowAnimationCallback = false;
 			afterSlideCallback.call(this);
 			this.state = 'PARALLAX';
-		}.bind(this), 100);
+		}.bind(this), this.config.timeHoldAnimationAfterMove);
 		return;
 	}
 
-	this.currentOffset = easeIn(1, this.beginOffset, this.changeOffset, duration);
+	this.currentOffset = _Easings2.default[this.config.easingSlideWrapper](1, this.beginOffset, this.changeOffset, this.config.animationDuration);
 	this.config.wrapper.style.transform = 'translateY(' + this.currentOffset + 'px)';
 };
 
@@ -598,7 +608,7 @@ var _class = function () {
 	}, {
 		key: 'slideTo',
 		value: function slideTo(id) {
-			if (id < 1 || id > this.slidesCount || this.state !== 'PARALLAX' || id == this.currentSlide) {
+			if (id < 1 || id > this.slidesCount || this.state !== 'PARALLAX' || id === this.currentSlide) {
 				return false;
 			}
 
@@ -617,14 +627,14 @@ var _class = function () {
 
 		this.config = config;
 		this.ItemContainer = new _ItemsContainer2.default(config);
-		this.ParallaxAnimationInst = new _ParallaxAnimation2.default(config.wrapper, this.config.bounceWrapper);
+		this.ParallaxAnimationInst = new _ParallaxAnimation2.default(config.wrapper, this.config.bounceWrapper, this.config);
 		this.ParallaxAnimationInst.setMaxOffset(detectSlideChange.bind(this), this.config.maxParralaxWrapper);
 
 		// Slide Animation
 		this.currentOffset = 0;
 		this.currentSlide = 1;
 		this.beforeSlide = 1;
-		this.slidesCount = 4;
+		this.slidesCount = this.config.slidesCounts;
 		this.state = 'PARALLAX';
 
 		this.ItemContainer.slide(this.beforeSlide, this.currentSlide); // aniamte current slide
@@ -647,7 +657,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{"./../animations/ParallaxAnimation.js":1,"./ItemsContainer.js":5}],7:[function(require,module,exports){
+},{"./../animations/ParallaxAnimation.js":1,"./../utils/Easings.js":8,"./ItemsContainer.js":5}],7:[function(require,module,exports){
 
 'use strict';
 
@@ -665,10 +675,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ACCELERATION = 1;
-var MAX_SPEED = 80;
-var WIND = 2.8;
-
 var timer = null,
     currentSpeed = 0,
     speedAbs;
@@ -676,15 +682,14 @@ var timer = null,
 var tickFn = function tickFn() {};
 
 var calcAccelerate = function calcAccelerate() {
-  var acceleration = ACCELERATION * Math.abs(this.currentDelta);
-  return acceleration / 2;
+  return Math.abs(this.currentDelta) / 2;
 };
 
 var getCurrentState = function getCurrentState() {
 
   speedAbs = Math.abs(currentSpeed);
 
-  if (this.scrolling && speedAbs < MAX_SPEED) {
+  if (this.scrolling && speedAbs < this.config.maxSpeedScrolling) {
     return this.direction === 'UP' ? 'SCROLLING_UP' : 'SCROLLING_DOWN';
   }
 
@@ -700,7 +705,7 @@ var getCurrentState = function getCurrentState() {
     return 'MOVE_BACK_DOWN';
   }
 
-  if (speedAbs > MAX_SPEED - 5) {
+  if (speedAbs > this.config.maxSpeedScrolling - 5) {
     return this.direction === 'UP' ? 'SCROLLING_MAX_UP' : 'SCROLLING_MAX_DOWN';
   }
 
@@ -717,13 +722,13 @@ var calcSpeed = function calcSpeed(state) {
     case 'SCROLLING_DOWN':
       currentSpeed = currentSpeed - this.acceleration;break;
     case 'MOVE_BACK_UP':
-      currentSpeed = currentSpeed + WIND;break;
+      currentSpeed = currentSpeed + this.config.moveBackAccellarate;break;
     case 'MOVE_BACK_DOWN':
-      currentSpeed = currentSpeed - WIND;break;
+      currentSpeed = currentSpeed - this.config.moveBackAccellarate;break;
     case 'SCROLLING_MAX_UP':
-      currentSpeed = MAX_SPEED;break;
+      currentSpeed = this.config.maxSpeedScrolling;break;
     case 'SCROLLING_MAX_DOWN':
-      currentSpeed = -MAX_SPEED;break;
+      currentSpeed = -this.config.maxSpeedScrolling;break;
     case 'CLOSE_ZERO':
       currentSpeed = 0;break;
   }
@@ -744,7 +749,7 @@ var tick = function tick() {
   calcSpeed.call(this, state);
   tickFn(currentSpeed, this.direction);
 
-  window.requestAnimationFrame(tick.bind(this));
+  requestAnimationFrame(tick.bind(this));
 };
 
 var _class = function () {
@@ -770,13 +775,14 @@ var _class = function () {
     }
   }]);
 
-  function _class() {
+  function _class(config) {
     _classCallCheck(this, _class);
 
+    this.config = config;
     this.scrolling = false;
     this.active = true;
     this.currentDelta = 0;
-    this.scrollManagerInst = new _ScrollHandler2.default(window, this.detectScroll.bind(this));
+    this.scrollManagerInst = new _ScrollHandler2.default(this.config.wrapper, this.detectScroll.bind(this));
   }
 
   _createClass(_class, [{
@@ -798,6 +804,21 @@ var _class = function () {
 exports.default = _class;
 
 },{"./../handlers/ScrollHandler.js":2}],8:[function(require,module,exports){
+
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var Easings = {
+	easeIn: function easeIn(t, b, c, d) {
+		return -c * (t /= d) * (t - 2) + b;
+	}
+};
+
+exports.default = Easings;
+
+},{}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

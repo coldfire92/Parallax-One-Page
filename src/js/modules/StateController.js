@@ -3,26 +3,21 @@
 
 import ScrollManager from './../handlers/ScrollHandler.js';
 
-const ACCELERATION = 1;
-const MAX_SPEED = 80;
-const WIND = 2.8;
-
 var timer = null,
-	currentSpeed = 0,
-	speedAbs;
+	  currentSpeed = 0,
+	  speedAbs;
 
 var tickFn = function(){};
 
 var calcAccelerate = function(){
-	var acceleration = ACCELERATION * Math.abs(this.currentDelta);
-	return acceleration / 2;
+	  return Math.abs(this.currentDelta) / 2;
 };
 
 var getCurrentState = function(){    
     
     speedAbs = Math.abs(currentSpeed);
   
-    if( this.scrolling && speedAbs < MAX_SPEED ){
+    if( this.scrolling && speedAbs < this.config.maxSpeedScrolling ){
         return this.direction === 'UP' ? 'SCROLLING_UP' : 'SCROLLING_DOWN';
     } 
 
@@ -38,7 +33,7 @@ var getCurrentState = function(){
        return 'MOVE_BACK_DOWN';
     }
 
-    if(speedAbs > (MAX_SPEED - 5) ){
+    if(speedAbs > (this.config.maxSpeedScrolling - 5) ){
        return this.direction === 'UP' ? 'SCROLLING_MAX_UP' : 'SCROLLING_MAX_DOWN';
     }
 
@@ -52,10 +47,10 @@ var calcSpeed = function(state){
    switch(state){
       case 'SCROLLING_UP'   : currentSpeed = currentSpeed + this.acceleration; break;
       case 'SCROLLING_DOWN' : currentSpeed = currentSpeed - this.acceleration; break;
-      case 'MOVE_BACK_UP'   : currentSpeed = currentSpeed + WIND; break;
-      case 'MOVE_BACK_DOWN' : currentSpeed = currentSpeed - WIND; break;
-      case 'SCROLLING_MAX_UP' : currentSpeed = MAX_SPEED; break;
-      case 'SCROLLING_MAX_DOWN' : currentSpeed = -MAX_SPEED; break;
+      case 'MOVE_BACK_UP'   : currentSpeed = currentSpeed + this.config.moveBackAccellarate; break;
+      case 'MOVE_BACK_DOWN' : currentSpeed = currentSpeed - this.config.moveBackAccellarate; break;
+      case 'SCROLLING_MAX_UP' : currentSpeed = this.config.maxSpeedScrolling; break;
+      case 'SCROLLING_MAX_DOWN' : currentSpeed = -this.config.maxSpeedScrolling; break;
       case 'CLOSE_ZERO' : currentSpeed = 0;break;
    }
 };
@@ -75,7 +70,7 @@ var tick = function(){
    calcSpeed.call(this,state);
    tickFn(currentSpeed, this.direction);
    
-   window.requestAnimationFrame(tick.bind(this));
+   requestAnimationFrame(tick.bind(this));
 };
 
 export default class {
@@ -86,7 +81,7 @@ export default class {
 	
 	detectScroll(delta, direction){
 		 // console.log(delta);
-	     this.scrolling = true;
+	   this.scrolling = true;
 		 this.direction = direction;
 		 this.currentDelta = delta; 
 		 clearTimeout(timer);
@@ -97,11 +92,12 @@ export default class {
 		tickFn = fn;
 	}
 
-	constructor(){
+	constructor(config){
+    this.config = config;
 		this.scrolling = false;
 		this.active = true;
 		this.currentDelta = 0;
-		this.scrollManagerInst = new ScrollManager(window, this.detectScroll.bind(this));
+		this.scrollManagerInst = new ScrollManager(this.config.wrapper, this.detectScroll.bind(this));
 	}
 
 	disable(){

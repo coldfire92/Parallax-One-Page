@@ -1,6 +1,5 @@
 'use strict';
 
-
 import ParallaxAnimation from './../animations/ParallaxAnimation.js';
 
 export default class {
@@ -26,13 +25,13 @@ export default class {
 
 			setTimeout(function(){
 				this.el.classList.remove('animate-show');
-			}.bind(this), this.configItem.showingDelay + 690);
+			}.bind(this), this.configItem.showingDelay + this.timeShowItemAfterStartSlide);
 
 			setTimeout(function(){
 				this.ParallaxAnimationInst.enable();
 				this.el.classList.remove(`direction-${direction}`);
 				console.log('Finish show up animation');
-			}.bind(this), this.configItem.showingDelay + 710);
+			}.bind(this), this.configItem.showingDelay + this.timeShowItemAfterStartSlide + 20);
 
 		} else if(from === this.slideNumber){
 			this.el.classList.remove('show');
@@ -47,13 +46,14 @@ export default class {
 		this.ParallaxAnimationInst.disable();
 	}
 
-    constructor(el, configItem, slideNumber){
+    constructor(el, mainConfig, configItem, slideNumber){
         console.log(slideNumber);
  	    this.el = el;
+ 	    this.mainConfig = mainConfig;
  	    this.currentSlide = 1;
  	    this.slideNumber = slideNumber;
  	    this.configItem = configItem;
- 	    this.ParallaxAnimationInst = new ParallaxAnimation(el, this.configItem.bounce, function(){});
+ 	    this.ParallaxAnimationInst = new ParallaxAnimation(el, this.configItem.bounce, mainConfig);
     }
 
     update(speed, direction){

@@ -1,18 +1,11 @@
-
 'use strict';
 
-
-var easeIn = function(t, b, c, d) {
-  return -c * (t /= d) * (t - 2) + b;
-};
-
-var seconds = 0.5;
-var duration = 60 * seconds;
+import Easings from './../utils/Easings.js';
 
 var animate = function(){
    this.beginOffset = this.currentOffset;
    this.changeOffset = this.finishOffset - this.beginOffset;
-   this.currentOffset = easeIn(1, this.beginOffset, this.changeOffset, duration);  
+   this.currentOffset = Easings[this.config.easingSlideWrapper](1, this.beginOffset, this.changeOffset, this.config.animationDuration);  
    
    if(Math.abs(this.currentOffset) < 0.1){
       this.currentOffset = 0;
@@ -50,8 +43,9 @@ export default class {
     this.max = max;
   }
 
-  constructor(el, bounce){
+  constructor(el, bounce, config){
   	this.el = el;
+    this.config = config;
   	this.active = true;
     this.bounce = bounce;
     
