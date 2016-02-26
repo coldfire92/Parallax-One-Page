@@ -29,7 +29,7 @@ export default class {
 				this.el.classList.remove(`direction-${direction}`);
 			}.bind(this), 900);
 
-		} else if(from == this.slideNumber){
+		} else if(from === this.slideNumber){
 			this.el.classList.remove('show');
 		}
 	}
