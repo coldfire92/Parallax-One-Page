@@ -64,6 +64,6 @@ export default class {
 	constructor(config, onScrollFunction){
 		this.config = config;
 		this.onScrollFunction = onScrollFunction;
-		Hamster(this.config.wrapper).wheel(onScroll.bind(this));
+		Hamster(window).wheel(onScroll.bind(this));
 	}
 }
