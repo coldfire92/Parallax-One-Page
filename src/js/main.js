@@ -7,7 +7,7 @@ import extend from './utils/extend.js';
 
 const defaults = {
 	bounceWrapper : 2.14,
-	maxParralaxWrapper : 90,
+	maxParralaxWrapper : 50,
 	beforeSlide : function(){},
 	afterSlide : function(){},
 	whenStartShowHideAnimation : function(){}

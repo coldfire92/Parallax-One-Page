@@ -21,6 +21,11 @@ var animate = function animate() {
   this.beginOffset = this.currentOffset;
   this.changeOffset = this.finishOffset - this.beginOffset;
   this.currentOffset = easeIn(1, this.beginOffset, this.changeOffset, duration);
+
+  if (Math.abs(this.currentOffset) < 0.1) {
+    this.currentOffset = 0;
+  }
+
   this.el.style.transform = 'translateY(' + this.currentOffset + 'px)';
 };
 
@@ -210,7 +215,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var defaults = {
 	bounceWrapper: 2.14,
-	maxParralaxWrapper: 90,
+	maxParralaxWrapper: 50,
 	beforeSlide: function beforeSlide() {},
 	afterSlide: function afterSlide() {},
 	whenStartShowHideAnimation: function whenStartShowHideAnimation() {}
@@ -278,7 +283,7 @@ window.getParallaxOnePage = function (config) {
 	return new parallaxOnePage(config);
 };
 
-},{"./modules/SlidesWrapper.js":4,"./modules/StateController.js":5,"./utils/extend.js":6}],4:[function(require,module,exports){
+},{"./modules/SlidesWrapper.js":6,"./modules/StateController.js":7,"./utils/extend.js":8}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -295,12 +300,197 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var _class = function () {
+	_createClass(_class, [{
+		key: 'slide',
+		value: function slide(from, to) {
+			this.currentSlide = to;
+
+			if (this.configItem.showingDisable) {
+				return;
+			}
+
+			if (to === this.slideNumber) {
+				var direction = from > to ? 'up' : 'down';
+				this.ParallaxAnimationInst.clear();
+				this.ParallaxAnimationInst.disable();
+
+				this.el.classList.add('direction-' + direction);
+
+				setTimeout(function () {
+					this.el.classList.add('show');
+					this.el.classList.add('animate-show');
+				}.bind(this), this.configItem.showingDelay);
+
+				setTimeout(function () {
+					this.el.classList.remove('animate-show');
+				}.bind(this), this.configItem.showingDelay + 690);
+
+				setTimeout(function () {
+					this.ParallaxAnimationInst.enable();
+					this.el.classList.remove('direction-' + direction);
+					console.log('Finish show up animation');
+				}.bind(this), this.configItem.showingDelay + 710);
+			} else if (from === this.slideNumber) {
+				this.el.classList.remove('show');
+			}
+		}
+	}, {
+		key: 'enable',
+		value: function enable() {
+			this.ParallaxAnimationInst.enable();
+		}
+	}, {
+		key: 'disable',
+		value: function disable() {
+			this.ParallaxAnimationInst.disable();
+		}
+	}]);
+
+	function _class(el, configItem, slideNumber) {
+		_classCallCheck(this, _class);
+
+		console.log(slideNumber);
+		this.el = el;
+		this.currentSlide = 1;
+		this.slideNumber = slideNumber;
+		this.configItem = configItem;
+		this.ParallaxAnimationInst = new _ParallaxAnimation2.default(el, this.configItem.bounce, function () {});
+	}
+
+	_createClass(_class, [{
+		key: 'update',
+		value: function update(speed, direction) {
+			if (this.currentSlide === this.slideNumber) {
+				this.ParallaxAnimationInst.update(speed, direction);
+			}
+		}
+	}]);
+
+	return _class;
+}();
+
+exports.default = _class;
+
+},{"./../animations/ParallaxAnimation.js":1}],5:[function(require,module,exports){
+
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Item = require('./Item.js');
+
+var _Item2 = _interopRequireDefault(_Item);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var parseItem = function parseItem(el, sectionIndex) {
+  var configItem = {
+    bounce: parseFloat(el.dataset.parallaxBounce),
+    showingDisable: el.dataset.animationShowingDisable ? true : false,
+    showingDelay: el.dataset.showingDelay ? parseInt(el.dataset.showingDelay) : 5
+  };
+
+  this.items.push(new _Item2.default(el, configItem, sectionIndex));
+};
+
+var getItems = function getItems() {
+  var sections = this.config.wrapper.querySelectorAll('section');
+  var self = this;
+  Array.prototype.forEach.call(sections, function (section, index) {
+    var items = section.querySelectorAll('[data-parallax-bounce]');
+    Array.prototype.forEach.call(items, function (el) {
+      parseItem.call(self, el, index + 1);
+    });
+  });
+};
+
+var _class = function () {
+  _createClass(_class, [{
+    key: 'enable',
+    value: function enable() {
+      this.items.forEach(function (item) {
+        return item.enable();
+      });
+    }
+  }, {
+    key: 'disable',
+    value: function disable() {
+      this.items.forEach(function (item) {
+        return item.disable();
+      });
+    }
+  }]);
+
+  function _class(config) {
+    _classCallCheck(this, _class);
+
+    this.config = config;
+    this.items = [];
+    getItems.call(this);
+  }
+
+  _createClass(_class, [{
+    key: 'update',
+    value: function update(delta, direction) {
+      this.items.forEach(function (item) {
+        return item.update(delta, direction);
+      });
+    }
+  }, {
+    key: 'slide',
+    value: function slide(from, to) {
+      this.items.forEach(function (item) {
+        return item.slide(from, to);
+      });
+    }
+  }]);
+
+  return _class;
+}();
+
+exports.default = _class;
+
+},{"./Item.js":4}],6:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _ParallaxAnimation = require('./../animations/ParallaxAnimation.js');
+
+var _ParallaxAnimation2 = _interopRequireDefault(_ParallaxAnimation);
+
+var _ItemsContainer = require('./ItemsContainer.js');
+
+var _ItemsContainer2 = _interopRequireDefault(_ItemsContainer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 var seconds = 0.5;
 var duration = 60 * seconds;
 
 var easeIn = function easeIn(t, b, c, d) {
 	return -c * (t /= d) * (t - 2) + b;
 };
+
+var isFinish,
+    callStartShowAnimationCallback = false,
+    globalBeforeFn;
+
+/* Detect Slide Move
+   ========================================================================== */
 
 var blockedSlideDetect = false;
 var detectSlideChange = function detectSlideChange(speed, direction) {
@@ -316,12 +506,34 @@ var detectSlideChange = function detectSlideChange(speed, direction) {
 	func.call(this);
 };
 
-var isFinish,
-    beforeMoveCallback = function beforeMoveCallback() {};
+/* Slides Callback
+   ========================================================================== */
+
+var startShowAnimation = function startShowAnimation() {
+	console.log('startShowAnimation ' + this.beforeSlide + ' => ' + this.currentSlide);
+	this.ItemContainer.slide(this.beforeSlide, this.currentSlide);
+};
+
+var afterSlideCallback = function afterSlideCallback() {
+	console.log('afterSlideCallback ' + this.beforeSlide + ' => ' + this.currentSlide);
+};
+
+var beforeSlideCallback = function beforeSlideCallback() {
+	console.log('beforeSlideCallback ' + this.beforeSlide + ' => ' + this.currentSlide);
+	globalBeforeFn(this.beforeSlide, this.currentSlide);
+};
+
+/* Animation
+   ========================================================================== */
 
 var animateSlideChange = function animateSlideChange() {
 	if (isFinish) {
 		return;
+	}
+
+	if (!callStartShowAnimationCallback) {
+		setTimeout(startShowAnimation.bind(this), 300);
+		callStartShowAnimationCallback = true;
 	}
 
 	var absCurrentOffset = Math.abs(this.currentOffset),
@@ -344,11 +556,12 @@ var animateSlideChange = function animateSlideChange() {
 	if (isFinish) {
 		this.ParallaxAnimationInst.changeGlobalTranslate(this.finishOffset);
 		this.currentOffset = this.finishOffset;
-		beforeMoveCallback();
 		setTimeout(function () {
 			isFinish = false;
+			callStartShowAnimationCallback = false;
+			afterSlideCallback.call(this);
 			this.state = 'PARALLAX';
-		}.bind(this), 200);
+		}.bind(this), 100);
 		return;
 	}
 
@@ -360,17 +573,18 @@ var _class = function () {
 	_createClass(_class, [{
 		key: 'beforeMove',
 		value: function beforeMove(fn) {
-			beforeMoveCallback = fn;
+			globalBeforeFn = fn;
 		}
 	}, {
 		key: 'slideDown',
 		value: function slideDown() {
-			if (this.currentPage < this.pagesCount) {
-				++this.currentPage;
-				this.finishOffset = (this.currentPage - 1) * window.innerHeight * -1;
+			if (this.currentSlide < this.slidesCount) {
+				this.beforeSlide = this.currentSlide;
+				++this.currentSlide;
+				this.finishOffset = (this.currentSlide - 1) * window.innerHeight * -1;
 				this.currentOffset = this.ParallaxAnimationInst.getCurrentOffset();
 				this.state = 'SLIDE_DOWN';
-				beforeMoveCallback();
+				beforeSlideCallback.call(this);
 				return true;
 			}
 
@@ -379,15 +593,13 @@ var _class = function () {
 	}, {
 		key: 'slideUp',
 		value: function slideUp() {
-			if (this.currentPage !== 1) {
-				--this.currentPage;
-				this.finishOffset = (this.currentPage - 1) * window.innerHeight * -1;
+			if (this.currentSlide !== 1) {
+				this.beforeSlide = this.currentSlide;
+				--this.currentSlide;
+				this.finishOffset = (this.currentSlide - 1) * window.innerHeight * -1;
 				this.currentOffset = this.ParallaxAnimationInst.getCurrentOffset();
-
-				console.log(this.currentOffset + ' -> ' + this.finishOffset);
-
 				this.state = 'SLIDE_UP';
-				beforeMoveCallback();
+				beforeSlideCallback.call(this);
 				return true;
 			}
 
@@ -396,7 +608,7 @@ var _class = function () {
 	}, {
 		key: 'slideTo',
 		value: function slideTo() {
-			var id = arguments.length <= 0 || arguments[0] === undefined ? this.currentPage : arguments[0];
+			var id = arguments.length <= 0 || arguments[0] === undefined ? this.currentSlide : arguments[0];
 
 			console.log('Move to: ' + id);
 		}
@@ -406,15 +618,20 @@ var _class = function () {
 		_classCallCheck(this, _class);
 
 		this.config = config;
+
+		this.ItemContainer = new _ItemsContainer2.default(config);
+
 		this.ParallaxAnimationInst = new _ParallaxAnimation2.default(config.wrapper, this.config.bounceWrapper);
 		this.ParallaxAnimationInst.setMaxOffset(detectSlideChange.bind(this), this.config.maxParralaxWrapper);
-		this.currentOffset = 0;
 
 		// Slide Animation
-		this.currentPage = 1;
-		this.pagesCount = 4;
-
+		this.currentOffset = 0;
+		this.currentSlide = 1;
+		this.beforeSlide = 1;
+		this.slidesCount = 4;
 		this.state = 'PARALLAX';
+
+		this.ItemContainer.slide(this.beforeSlide, this.currentSlide); // aniamte current slide
 	}
 
 	_createClass(_class, [{
@@ -422,6 +639,7 @@ var _class = function () {
 		value: function update(speed, direction) {
 			if (this.state === 'PARALLAX') {
 				this.ParallaxAnimationInst.update(speed, direction);
+				this.ItemContainer.update(speed, direction);
 			} else {
 				animateSlideChange.call(this);
 			}
@@ -433,7 +651,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{"./../animations/ParallaxAnimation.js":1}],5:[function(require,module,exports){
+},{"./../animations/ParallaxAnimation.js":1,"./ItemsContainer.js":5}],7:[function(require,module,exports){
 
 'use strict';
 
@@ -529,8 +747,6 @@ var tick = function tick() {
 
   calcSpeed.call(this, state);
   tickFn(currentSpeed, this.direction);
-  // console.log(state);
-  // console.log(currentSpeed);
 
   window.requestAnimationFrame(tick.bind(this));
 };
@@ -540,8 +756,6 @@ var _class = function () {
     key: 'resetSpeed',
     value: function resetSpeed() {
       currentSpeed = 0;
-      // console.log(currentSpeed);
-      // console.log(`Reset speed`);
     }
   }, {
     key: 'detectScroll',
@@ -587,7 +801,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{"./../handlers/ScrollHandler.js":2}],6:[function(require,module,exports){
+},{"./../handlers/ScrollHandler.js":2}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

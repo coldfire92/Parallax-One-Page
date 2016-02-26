@@ -12,7 +12,12 @@ var duration = 60 * seconds;
 var animate = function(){
    this.beginOffset = this.currentOffset;
    this.changeOffset = this.finishOffset - this.beginOffset;
-   this.currentOffset = easeIn(1, this.beginOffset, this.changeOffset, duration);
+   this.currentOffset = easeIn(1, this.beginOffset, this.changeOffset, duration);  
+   
+   if(Math.abs(this.currentOffset) < 0.1){
+      this.currentOffset = 0;
+   }
+   
    this.el.style.transform = `translateY(${this.currentOffset}px)`; 
 };
 
@@ -70,12 +75,12 @@ export default class {
     var relativeY = Math.round(speed * this.bounce * 100) / 100;
     this.finishOffset = relativeY + this.transYGlobal; 
         
-    if( this.afterIncreaseMaxCallback && this.max){
+    if(this.afterIncreaseMaxCallback && this.max){
         if(Math.abs(relativeY) > this.max){
           this.afterIncreaseMaxCallback(relativeY, direction);
         }
-    }
-
+    } 
+    
     animate.call(this);
   }
 }

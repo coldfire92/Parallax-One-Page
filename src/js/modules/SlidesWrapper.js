@@ -1,6 +1,7 @@
 'use strict';
 
 import ParallaxAnimation from './../animations/ParallaxAnimation.js';
+import ItemsContainer from './ItemsContainer.js';
 
 var seconds = 0.5;
 var duration = 60 * seconds;
@@ -8,6 +9,13 @@ var duration = 60 * seconds;
 var easeIn = function(t, b, c, d) {
   return -c * (t /= d) * (t - 2) + b;
 };
+
+var isFinish,
+	callStartShowAnimationCallback = false,
+	globalBeforeFn;
+
+/* Detect Slide Move
+   ========================================================================== */
 
 var blockedSlideDetect = false;
 var detectSlideChange = function(speed, direction){
@@ -21,14 +29,36 @@ var detectSlideChange = function(speed, direction){
 	func.call(this);
 };
 
-var isFinish,
-	beforeMoveCallback = function(){};
+/* Slides Callback
+   ========================================================================== */
+
+var startShowAnimation = function(){
+	console.log(`startShowAnimation ${this.beforeSlide} => ${this.currentSlide}`);
+	this.ItemContainer.slide(this.beforeSlide, this.currentSlide);
+};
+
+var afterSlideCallback = function(){
+	console.log(`afterSlideCallback ${this.beforeSlide} => ${this.currentSlide}`);	
+};
+
+var beforeSlideCallback = function(){
+	console.log(`beforeSlideCallback ${this.beforeSlide} => ${this.currentSlide}`);
+	globalBeforeFn(this.beforeSlide, this.currentSlide);
+};
+
+/* Animation
+   ========================================================================== */
 
 var animateSlideChange = function(){
 	if(isFinish){
 		return;
 	}
 	
+	if(!callStartShowAnimationCallback){
+		setTimeout(startShowAnimation.bind(this), 300);
+		callStartShowAnimationCallback = true;
+	}
+
 	var absCurrentOffset = Math.abs(this.currentOffset),
 		absFinish = Math.abs(this.finishOffset);
 
@@ -49,11 +79,12 @@ var animateSlideChange = function(){
 	if(isFinish){
 		this.ParallaxAnimationInst.changeGlobalTranslate(this.finishOffset);
 		this.currentOffset = this.finishOffset;
-		beforeMoveCallback();
 		setTimeout(function(){
 			isFinish = false;
+			callStartShowAnimationCallback = false;
+			afterSlideCallback.call(this);
 			this.state='PARALLAX';
-		}.bind(this), 200);
+		}.bind(this), 100);
 		return;
 	} 
 
@@ -64,16 +95,17 @@ var animateSlideChange = function(){
 export default class {
 
 	beforeMove(fn){
-		beforeMoveCallback = fn;
+		globalBeforeFn = fn;
 	}
 
 	slideDown(){
-		if(this.currentPage < this.pagesCount){
-			++this.currentPage;
-			this.finishOffset = (this.currentPage - 1) * window.innerHeight * -1;
+		if(this.currentSlide < this.slidesCount){
+			this.beforeSlide = this.currentSlide;
+			++this.currentSlide;
+			this.finishOffset = (this.currentSlide - 1) * window.innerHeight * -1;
 			this.currentOffset = this.ParallaxAnimationInst.getCurrentOffset();
 			this.state = 'SLIDE_DOWN';
-			beforeMoveCallback();
+			beforeSlideCallback.call(this);
 			return true;
 		}
 
@@ -81,41 +113,45 @@ export default class {
 	}
 
 	slideUp(){
-		if(this.currentPage!==1){
-			--this.currentPage;
-			this.finishOffset = (this.currentPage - 1) * window.innerHeight * -1;
-			this.currentOffset = this.ParallaxAnimationInst.getCurrentOffset();
-
-			console.log(`${this.currentOffset} -> ${this.finishOffset}`);
-			
+		if(this.currentSlide!==1){
+			this.beforeSlide = this.currentSlide;
+			--this.currentSlide;
+			this.finishOffset = (this.currentSlide - 1) * window.innerHeight * -1;
+			this.currentOffset = this.ParallaxAnimationInst.getCurrentOffset();	
 			this.state = 'SLIDE_UP';
-			beforeMoveCallback();
+			beforeSlideCallback.call(this);
 			return true;
 		} 
 
 		return false;
 	}
 
-	slideTo(id = this.currentPage){	
+	slideTo(id = this.currentSlide){	
 		console.log('Move to: ' + id);
 	}
 
     constructor(config){
   	    this.config = config;
+  	
+  	    this.ItemContainer = new ItemsContainer(config);
+
   	    this.ParallaxAnimationInst = new ParallaxAnimation(config.wrapper, this.config.bounceWrapper);
   		this.ParallaxAnimationInst.setMaxOffset(detectSlideChange.bind(this), this.config.maxParralaxWrapper);
-  	    this.currentOffset = 0;
-  	    
+  	       
   	    // Slide Animation
-  	    this.currentPage = 1;
-  	    this.pagesCount = 4;
-  	 
+  	    this.currentOffset = 0;
+  	    this.currentSlide = 1;
+  	    this.beforeSlide = 1;
+  	    this.slidesCount = 4;
   		this.state = 'PARALLAX';
+
+  		this.ItemContainer.slide( this.beforeSlide, this.currentSlide); // aniamte current slide
     }
 
     update(speed, direction){
     	if(this.state === 'PARALLAX'){
     		this.ParallaxAnimationInst.update(speed, direction);
+    		this.ItemContainer.update(speed, direction);
     	} else {
     		animateSlideChange.call(this);
     	}

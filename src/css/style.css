@@ -16,5 +16,34 @@ div#scroll-wrapper {
 		height: 100vh;
 		width: 100vw;
 		position: relative;
+
+		.item {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+
+			&:not([data-animation-showing-disable]){
+				opacity : 0;
+
+				&.direction-up {
+					transform: translate(0,-150px);
+					transition-timing-function: ease-out;
+				}
+
+				&.direction-down {
+					transform: translate(0,150px);
+					transition-timing-function: ease-in;
+				}
+
+				&.animate-show {
+					transition: all 500ms;	
+				}
+
+				&.show {
+					opacity: 1;	
+					transform: translate(0, 0);
+				}
+			}
+		}
 	}
 }

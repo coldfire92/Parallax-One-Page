@@ -1,29 +1,18 @@
 
+.mobile {
+	width: 200px;
+	height: 400px;
+	background : red;
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	margin-left: 150px;
+	margin-top: -200px;
+	z-index: 99;
+}
+
+
 div#scroll-wrapper section {
-	.item {
-		position: absolute;
-		left: 50%;
-		top: 50%;
-		opacity : 0;
-
-		&.direction-up {
-			transform: translate(0,-300px);
-		}
-
-		&.direction-down {
-			transform: translate(0,300px);
-		}
-
-		&.animate-show {
-			transition: all 700ms;	
-		}
-
-		&.show {
-			opacity: 1;	
-			transform: translate(0, 0);
-		}
-
-	}
 
 	&[data-name="first"] .item {
 
@@ -84,6 +73,4 @@ div#scroll-wrapper section {
 		}
 
 	}
-
-
 }

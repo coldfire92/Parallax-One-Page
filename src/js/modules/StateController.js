@@ -74,8 +74,6 @@ var tick = function(){
  
    calcSpeed.call(this,state);
    tickFn(currentSpeed, this.direction);
-   // console.log(state);
-   // console.log(currentSpeed);
    
    window.requestAnimationFrame(tick.bind(this));
 };
@@ -84,10 +82,8 @@ export default class {
 
 	resetSpeed(){
 		currentSpeed = 0;
-		// console.log(currentSpeed);
-		// console.log(`Reset speed`);
 	}
-
+	
 	detectScroll(delta, direction){
 		 // console.log(delta);
 	     this.scrolling = true;
