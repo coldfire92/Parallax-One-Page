@@ -1,9 +1,7 @@
 
 'use strict';
 
-import SlidesWrapper from './modules/SlidesWrapper.js';
-import ItemsContainer from './modules/ItemsContainer.js';
-import Ticker from './modules/Ticker.js';
+import StateController from './modules/StateController.js';
 import extend from './utils/extend.js';
 
 const defaults = {
@@ -11,15 +9,8 @@ const defaults = {
 	maxParralaxWrapper : 70,
 };
 
-var onScroll = function(speed, direction){
-	// console.log(accelerate);
-	this.slidesWrapper.update(speed, direction);
-	this.itemsContainer.update(speed, direction);
-};
-
 var slide = function(beforeSlide, nextSlide){
 	console.log('Move ' + beforeSlide + ' to' + nextSlide);
-	this.itemsContainer.slide(beforeSlide, nextSlide);
 };
 
 class parallaxOnePage {
@@ -41,24 +32,19 @@ class parallaxOnePage {
 	}
 
 	setEnable(){
-		this.tickerInst.enable();
-		this.itemsContainer.enable();
 		this.enable = true;
 	}
 
 	setDisable(){
-		console.log(this.bounceDeltaEmulator);
-		this.tickerInst.disable();
-		this.itemsContainer.disable();
 		this.enable = false;
 	}
 
 	constructor(options){
 		this.enable = true;
 	 	this.settings = extend(defaults, options);
-	 	this.slidesWrapper = new SlidesWrapper(this.settings, slide.bind(this));
-	 	this.itemsContainer = new ItemsContainer(this.settings);
-	 	this.tickerInst = new Ticker(window, onScroll.bind(this));
+	 	
+	 	new StateController();
+
 
 	 	slide.call(this,1,1);
 
