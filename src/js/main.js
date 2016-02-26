@@ -3,7 +3,9 @@
 
 import StateController from './modules/StateController.js';
 import SlidesWrapper from './modules/SlidesWrapper.js';
+import BodyClassManager from './modules/BodyClassManager.js';
 import extend from './utils/extend.js';
+
 
 /* Config
    ========================================================================== */
@@ -41,15 +43,18 @@ const defaults = {
 
 var beforeSlide = function(beforeSlide, currentSlide){
 	this.settings.beforeSlide(beforeSlide, currentSlide);
+	this.bodyClassManagerInst.beforeSlide(beforeSlide, currentSlide);
     this.stateControllerInst.resetSpeed.bind(this);
 };
 
 var afterSlide = function(beforeSlide, currentSlide){
  	this.settings.afterSlide(beforeSlide, currentSlide);
+ 	this.bodyClassManagerInst.afterSlide(beforeSlide, currentSlide);
 };
 
 var startShowItemsAnimation = function(beforeSlide, currentSlide){
-   	this.settings.startShowItemsAnimation(beforeSlide, currentSlide);             
+   	this.settings.startShowItemsAnimation(beforeSlide, currentSlide);
+   	this.bodyClassManagerInst.startShowItemsAnimation(beforeSlide, currentSlide);         
 };
 
 class parallaxOnePage {
@@ -102,6 +107,10 @@ class parallaxOnePage {
 	 	this.slidesWrapperInst.addAfterSlide(afterSlide.bind(this));
 	 	this.slidesWrapperInst.addStartShowItemsAnimation(startShowItemsAnimation.bind(this));
 
+	 	// bodyClassManager
+	 	this.bodyClassManagerInst = new BodyClassManager(this.settings);
+
+	 	// enable
 	 	this.setEnable.call(this); 	
 	}
 }
