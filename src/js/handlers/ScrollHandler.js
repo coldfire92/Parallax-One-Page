@@ -3,6 +3,7 @@
 const MAX_SCROLL_EVENT_TIME = 300;
 const AGAIN_LISTEN_FOR_EVENTS = 50;
 const MAX_DELTA_AS_SLOW_SCROLL = 15;
+const MAX_ALLOWED_DELTA = 100;
 
 var firstEventTime = false,
 	currentEventDirection = false,
@@ -10,9 +11,7 @@ var firstEventTime = false,
 	timerClearEventTime;
 
 
-
 var clearEventTime = function(){
-	console.log('clear curretn scroll');
 	firstEventTime = false;
 	currentEventDirection = '';
 	currentEventMaxDelta = 0;
@@ -21,8 +20,8 @@ var clearEventTime = function(){
 var calcCorrectDelta = function(delta){
 	var absDelta = Math.abs(delta);
 
-	if(absDelta > 100){
-		delta = (currentEventDirection === 'up') ? 100 : -100;
+	if(absDelta > MAX_ALLOWED_DELTA){ // max delta 
+		delta = (currentEventDirection === 'UP') ? MAX_ALLOWED_DELTA : -MAX_ALLOWED_DELTA;
 	}
 
 	return delta;
@@ -32,7 +31,7 @@ var calcCorrectDelta = function(delta){
 var isCallEvent = function(event, delta, deltaX, deltaY){
 	if(!firstEventTime){
 		firstEventTime = Date.now();
-		currentEventDirection = (deltaY > 0) ? 'up' : 'down';
+		currentEventDirection = (deltaY > 0) ? 'UP' : 'DOWN';
 	}
 
 	var currTime = Date.now(),
@@ -41,13 +40,16 @@ var isCallEvent = function(event, delta, deltaX, deltaY){
 		callEvent = (diff < MAX_SCROLL_EVENT_TIME),
 		slowScroll = (Math.abs(deltaY) < MAX_DELTA_AS_SLOW_SCROLL);
 
+	// set max delta of current scroll
 	if(absDelta > currentEventMaxDelta) {
 		currentEventMaxDelta = absDelta;
 	}
 	
+	// clear current scroll
 	clearTimeout(timerClearEventTime);
 	timerClearEventTime = setTimeout(clearEventTime, AGAIN_LISTEN_FOR_EVENTS);
 
+	// for slow scrolls (touchapad or magic mouse)
 	if(slowScroll && (currentEventMaxDelta < MAX_DELTA_AS_SLOW_SCROLL) ){
 		return true;		
 	}

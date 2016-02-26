@@ -2,25 +2,29 @@
 'use strict';
 
 import StateController from './modules/StateController.js';
+import SlidesWrapper from './modules/SlidesWrapper.js';
 import extend from './utils/extend.js';
 
 const defaults = {
 	bounceWrapper : 2.14,
-	maxParralaxWrapper : 70,
-};
-
-var slide = function(beforeSlide, nextSlide){
-	console.log('Move ' + beforeSlide + ' to' + nextSlide);
+	maxParralaxWrapper : 90,
+	beforeSlide : function(){},
+	afterSlide : function(){},
+	whenStartShowHideAnimation : function(){}
 };
 
 class parallaxOnePage {
   
-	moveDown(){
-
+	slideUp(){
+		this.slidesWrapperInst.moveUp();
 	}
 
-	moveTo(){
+	slideDown(){
+		this.slidesWrapperInst.moveDown();
+	}
 
+	slideTo(index){
+		this.slidesWrapperInst.moveTo(index);
 	}
 
 	toggleEnable(){
@@ -32,21 +36,25 @@ class parallaxOnePage {
 	}
 
 	setEnable(){
+		this.stateControllerInst.enable();
 		this.enable = true;
 	}
 
 	setDisable(){
+		this.stateControllerInst.disable();
 		this.enable = false;
 	}
 
 	constructor(options){
 		this.enable = true;
 	 	this.settings = extend(defaults, options);
-	 	
-	 	new StateController();
+	 		
+	 	this.slidesWrapperInst = new SlidesWrapper(this.settings);
 
+	 	this.stateControllerInst = new StateController(this.settings);
+	 	this.stateControllerInst.onTick(this.slidesWrapperInst.update.bind(this.slidesWrapperInst));
 
-	 	slide.call(this,1,1);
+	 	this.slidesWrapperInst.beforeMove(this.stateControllerInst.resetSpeed.bind(this));
 
 	 	this.setEnable.call(this); 	
 	}
