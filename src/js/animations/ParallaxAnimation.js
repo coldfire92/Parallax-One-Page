@@ -7,23 +7,13 @@ var easeIn = function(t, b, c, d) {
 };
 
 var seconds = 0.5;
-var time = 0;
 var duration = 60 * seconds;
 
 var animate = function(){
    this.beginOffset = this.currentOffset;
-
    this.changeOffset = this.finishOffset - this.beginOffset;
-
-    // Easing into the target.
    this.currentOffset = easeIn(1, this.beginOffset, this.changeOffset, duration);
-
-   console.log(this.currentOffset);
-   
    this.el.style.transform = `translateY(${this.currentOffset}px)`; 
-    
-   // Increase time.
-   time++;
 };
 
 export default class {
@@ -87,6 +77,5 @@ export default class {
     }
 
     animate.call(this);
-
   }
 }

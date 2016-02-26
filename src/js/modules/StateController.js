@@ -15,11 +15,6 @@ var tickFn = function(){};
 
 var calcAccelerate = function(){
 	var acceleration = ACCELERATION * Math.abs(this.currentDelta);
-
-	// if(speedAbs < (MAX_SPEED - 10)){
-	// 	acceleration = acceleration - (MAX_SPEED - speedAbs);
-	// }
-
 	return acceleration / 2;
 };
 
@@ -89,12 +84,12 @@ export default class {
 
 	resetSpeed(){
 		currentSpeed = 0;
-		console.log(currentSpeed);
-		console.log(`Reset speed`);
+		// console.log(currentSpeed);
+		// console.log(`Reset speed`);
 	}
 
 	detectScroll(delta, direction){
-		 console.log(delta);
+		 // console.log(delta);
 	     this.scrolling = true;
 		 this.direction = direction;
 		 this.currentDelta = delta; 

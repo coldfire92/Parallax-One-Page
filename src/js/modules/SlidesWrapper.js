@@ -2,15 +2,11 @@
 
 import ParallaxAnimation from './../animations/ParallaxAnimation.js';
 
-const animationDirections = {
-	'SLIDE_UP' : {
-		condition : '>',
-		'sign' : '+'
-	},
-	'SLIDE_DOWN' : {
-		condition : '<',
-		'sign' : '-'
-	}
+var seconds = 0.5;
+var duration = 60 * seconds;
+
+var easeIn = function(t, b, c, d) {
+  return -c * (t /= d) * (t - 2) + b;
 };
 
 var blockedSlideDetect = false;
@@ -28,29 +24,40 @@ var detectSlideChange = function(speed, direction){
 var isFinish,
 	beforeMoveCallback = function(){};
 
-var animateSlideChange = function(speed){
-
+var animateSlideChange = function(){
 	if(isFinish){
 		return;
 	}
+	
+	var absCurrentOffset = Math.abs(this.currentOffset),
+		absFinish = Math.abs(this.finishOffset);
 
-	eval(`this.currentOffset ${animationDirections[this.state].sign}=12`);	
-	eval(`isFinish = this.currentOffset ${animationDirections[this.state].condition} this.toScroll`);
+	if(this.state === 'SLIDE_DOWN'){
+		isFinish = (absCurrentOffset > (absFinish - 1));
+		this.beginOffset = this.currentOffset;
+    	this.changeOffset = this.finishOffset - this.beginOffset;
+    	// console.log(`Animate slide up from ${this.beginOffset} to ${this.finishOffset} with ${this.changeOffset} `);
+    	this.currentOffset = easeIn(1, this.beginOffset, this.changeOffset, duration);
+	} else {
+		isFinish = (absCurrentOffset < (absFinish + 1));
+		this.beginOffset = this.currentOffset;
+    	this.changeOffset = Math.abs(this.finishOffset - this.beginOffset);
+    	// console.log(`Animate slide up from ${this.beginOffset} to ${this.finishOffset} with ${this.changeOffset} `);
+    	this.currentOffset = easeIn(1, this.beginOffset, this.changeOffset, duration);
+	}
 
 	if(isFinish){
-		this.ParallaxAnimationInst.changeGlobalTranslate(this.toScroll);
-		this.currentOffset = this.toScroll;
-		// this.moveCollback((this.state === 'SLIDE_UP') ? this.currentPage+1 : this.currentPage-1 , this.currentPage);
-		isFinish = true;
+		this.ParallaxAnimationInst.changeGlobalTranslate(this.finishOffset);
+		this.currentOffset = this.finishOffset;
 		beforeMoveCallback();
 		setTimeout(function(){
-			this.state='PARALLAX';
 			isFinish = false;
-			console.log('enabel parallax');
+			this.state='PARALLAX';
 		}.bind(this), 200);
+		return;
 	} 
 
-	// console.log(`${this.currentOffset} / ${this.toScroll}`);
+	this.currentOffset = easeIn(1, this.beginOffset, this.changeOffset, duration);
 	this.config.wrapper.style.transform = `translateY(${this.currentOffset}px)`;
 };
 
@@ -63,7 +70,7 @@ export default class {
 	slideDown(){
 		if(this.currentPage < this.pagesCount){
 			++this.currentPage;
-			this.toScroll = (this.currentPage - 1) * window.innerHeight * -1;
+			this.finishOffset = (this.currentPage - 1) * window.innerHeight * -1;
 			this.currentOffset = this.ParallaxAnimationInst.getCurrentOffset();
 			this.state = 'SLIDE_DOWN';
 			beforeMoveCallback();
@@ -76,8 +83,11 @@ export default class {
 	slideUp(){
 		if(this.currentPage!==1){
 			--this.currentPage;
-			this.toScroll = (this.currentPage - 1) * window.innerHeight * -1;
+			this.finishOffset = (this.currentPage - 1) * window.innerHeight * -1;
 			this.currentOffset = this.ParallaxAnimationInst.getCurrentOffset();
+
+			console.log(`${this.currentOffset} -> ${this.finishOffset}`);
+			
 			this.state = 'SLIDE_UP';
 			beforeMoveCallback();
 			return true;
@@ -94,7 +104,7 @@ export default class {
   	    this.config = config;
   	    this.ParallaxAnimationInst = new ParallaxAnimation(config.wrapper, this.config.bounceWrapper);
   		this.ParallaxAnimationInst.setMaxOffset(detectSlideChange.bind(this), this.config.maxParralaxWrapper);
-  	    this.currentMouseDelta = 0;
+  	    this.currentOffset = 0;
   	    
   	    // Slide Animation
   	    this.currentPage = 1;
@@ -107,7 +117,7 @@ export default class {
     	if(this.state === 'PARALLAX'){
     		this.ParallaxAnimationInst.update(speed, direction);
     	} else {
-    		animateSlideChange.call(this, speed);
+    		animateSlideChange.call(this);
     	}
     }
 }
