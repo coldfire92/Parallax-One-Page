@@ -212,6 +212,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+/* Config
+   ========================================================================== */
+
 var defaults = {
 	wrapper: document.createElement('div'),
 	sections: [],
@@ -231,6 +234,22 @@ var defaults = {
 	beforeSlide: function beforeSlide() {},
 	afterSlide: function afterSlide() {},
 	startShowItemsAnimation: function startShowItemsAnimation() {}
+};
+
+/* Settings
+   ========================================================================== */
+
+var beforeSlide = function beforeSlide(_beforeSlide, currentSlide) {
+	this.settings.beforeSlide(_beforeSlide, currentSlide);
+	this.stateControllerInst.resetSpeed.bind(this);
+};
+
+var afterSlide = function afterSlide(beforeSlide, currentSlide) {
+	this.settings.afterSlide(beforeSlide, currentSlide);
+};
+
+var startShowItemsAnimation = function startShowItemsAnimation(beforeSlide, currentSlide) {
+	this.settings.startShowItemsAnimation(beforeSlide, currentSlide);
 };
 
 var parallaxOnePage = function () {
@@ -277,15 +296,20 @@ var parallaxOnePage = function () {
 
 		this.enable = true;
 
+		// settings
 		this.settings = (0, _extend2.default)(defaults, options);
 		this.settings.sections = this.settings.wrapper.querySelectorAll('section');
 		this.settings.slidesCounts = this.settings.sections.length;
 
+		// main
 		this.slidesWrapperInst = new _SlidesWrapper2.default(this.settings);
 		this.stateControllerInst = new _StateController2.default(this.settings);
 		this.stateControllerInst.onTick(this.slidesWrapperInst.update.bind(this.slidesWrapperInst));
 
-		this.slidesWrapperInst.beforeMove(this.stateControllerInst.resetSpeed.bind(this));
+		// actions for slides
+		this.slidesWrapperInst.addBeforeSlide(beforeSlide.bind(this));
+		this.slidesWrapperInst.addAfterSlide(afterSlide.bind(this));
+		this.slidesWrapperInst.addStartShowItemsAnimation(startShowItemsAnimation.bind(this));
 
 		this.setEnable.call(this);
 	}
@@ -499,7 +523,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var isFinish,
     callStartShowAnimationCallback = false,
-    globalBeforeFn;
+    globalBeforeFn,
+    globalAfterFn,
+    globalStartShowItemsAnimationFn;
 
 /* Detect Slide Move
    ========================================================================== */
@@ -522,16 +548,15 @@ var detectSlideChange = function detectSlideChange(speed, direction) {
    ========================================================================== */
 
 var startShowAnimation = function startShowAnimation() {
-	this.config.startShowItemsAnimation(this.beforeSlide, this.currentSlide);
 	this.ItemContainer.slide(this.beforeSlide, this.currentSlide);
+	globalStartShowItemsAnimationFn(this.beforeSlide, this.currentSlide);
 };
 
 var afterSlideCallback = function afterSlideCallback() {
-	this.config.afterSlide(this.beforeSlide, this.currentSlide);
+	globalAfterFn(this.beforeSlide, this.currentSlide);
 };
 
 var beforeSlideCallback = function beforeSlideCallback() {
-	this.config.beforeSlide(this.beforeSlide, this.currentSlide);
 	globalBeforeFn(this.beforeSlide, this.currentSlide);
 };
 
@@ -579,9 +604,19 @@ var animateSlideChange = function animateSlideChange() {
 
 var _class = function () {
 	_createClass(_class, [{
-		key: 'beforeMove',
-		value: function beforeMove(fn) {
+		key: 'addBeforeSlide',
+		value: function addBeforeSlide(fn) {
 			globalBeforeFn = fn;
+		}
+	}, {
+		key: 'addAfterSlide',
+		value: function addAfterSlide(fn) {
+			globalAfterFn = fn;
+		}
+	}, {
+		key: 'addStartShowItemsAnimation',
+		value: function addStartShowItemsAnimation(fn) {
+			globalStartShowItemsAnimationFn = fn;
 		}
 	}, {
 		key: 'slideDown',

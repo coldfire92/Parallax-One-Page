@@ -6,7 +6,9 @@ import Easings from './../utils/Easings.js';
 
 var isFinish,
 	callStartShowAnimationCallback = false,
-	globalBeforeFn;
+	globalBeforeFn,
+	globalAfterFn,
+	globalStartShowItemsAnimationFn;
 
 /* Detect Slide Move
    ========================================================================== */
@@ -27,16 +29,15 @@ var detectSlideChange = function(speed, direction){
    ========================================================================== */
 
 var startShowAnimation = function(){
-	this.config.startShowItemsAnimation(this.beforeSlide, this.currentSlide);
 	this.ItemContainer.slide(this.beforeSlide, this.currentSlide);
+	globalStartShowItemsAnimationFn(this.beforeSlide, this.currentSlide);
 };
 
 var afterSlideCallback = function(){
-	this.config.afterSlide(this.beforeSlide, this.currentSlide);
+	globalAfterFn(this.beforeSlide, this.currentSlide);
 };
 
 var beforeSlideCallback = function(){
-	this.config.beforeSlide(this.beforeSlide, this.currentSlide);
 	globalBeforeFn(this.beforeSlide, this.currentSlide);
 };
 
@@ -84,8 +85,16 @@ var animateSlideChange = function(){
 
 export default class {
 
-	beforeMove(fn){
+	addBeforeSlide(fn){
 		globalBeforeFn = fn;
+	}
+
+	addAfterSlide(fn){
+		globalAfterFn = fn;
+	}
+
+	addStartShowItemsAnimation(fn){
+		globalStartShowItemsAnimationFn = fn;
 	}
 
 	slideDown(){

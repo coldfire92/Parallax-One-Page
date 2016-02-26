@@ -5,6 +5,9 @@ import StateController from './modules/StateController.js';
 import SlidesWrapper from './modules/SlidesWrapper.js';
 import extend from './utils/extend.js';
 
+/* Config
+   ========================================================================== */
+
 const defaults = {
 	wrapper : document.createElement('div'),
 	sections : [],
@@ -24,6 +27,22 @@ const defaults = {
 	beforeSlide : function(){},
 	afterSlide : function(){},
 	startShowItemsAnimation : function(){}
+};
+
+/* Settings
+   ========================================================================== */
+
+var beforeSlide = function(beforeSlide, currentSlide){
+	this.settings.beforeSlide(beforeSlide, currentSlide);
+    this.stateControllerInst.resetSpeed.bind(this);
+};
+
+var afterSlide = function(beforeSlide, currentSlide){
+ 	this.settings.afterSlide(beforeSlide, currentSlide);
+};
+
+var startShowItemsAnimation = function(beforeSlide, currentSlide){
+   	this.settings.startShowItemsAnimation(beforeSlide, currentSlide);             
 };
 
 class parallaxOnePage {
@@ -61,16 +80,20 @@ class parallaxOnePage {
 	constructor(options){
 		this.enable = true;
 		
+		// settings
 	 	this.settings = extend(defaults, options);
 	 	this.settings.sections = this.settings.wrapper.querySelectorAll('section');
 	 	this.settings.slidesCounts = this.settings.sections.length;
 
+	 	// main
 	 	this.slidesWrapperInst = new SlidesWrapper(this.settings);
 	 	this.stateControllerInst = new StateController(this.settings);
 	 	this.stateControllerInst.onTick(this.slidesWrapperInst.update.bind(this.slidesWrapperInst));
-	 	
-	 	this.slidesWrapperInst.beforeMove(this.stateControllerInst.resetSpeed.bind(this));
-
+	 
+	 	// actions for slides
+	 	this.slidesWrapperInst.addBeforeSlide(beforeSlide.bind(this));
+	 	this.slidesWrapperInst.addAfterSlide(afterSlide.bind(this));
+	 	this.slidesWrapperInst.addStartShowItemsAnimation(startShowItemsAnimation.bind(this));
 
 	 	this.setEnable.call(this); 	
 	}
