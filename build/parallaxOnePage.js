@@ -117,11 +117,6 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var MAX_SCROLL_EVENT_TIME = 300;
-var AGAIN_LISTEN_FOR_EVENTS = 50;
-var MAX_DELTA_AS_SLOW_SCROLL = 15;
-var MAX_ALLOWED_DELTA = 100;
-
 var firstEventTime = false,
     currentEventDirection = false,
     currentEventMaxDelta = 0,
@@ -136,9 +131,9 @@ var clearEventTime = function clearEventTime() {
 var calcCorrectDelta = function calcCorrectDelta(delta) {
 	var absDelta = Math.abs(delta);
 
-	if (absDelta > MAX_ALLOWED_DELTA) {
+	if (absDelta > this.config.maxAllowedScrollDelta) {
 		// max delta
-		delta = currentEventDirection === 'UP' ? MAX_ALLOWED_DELTA : -MAX_ALLOWED_DELTA;
+		delta = currentEventDirection === 'UP' ? this.config.maxAllowedScrollDelta : -this.config.maxAllowedScrollDelta;
 	}
 
 	return delta;
@@ -154,8 +149,8 @@ var isCallEvent = function isCallEvent(event, delta, deltaX, deltaY) {
 	var currTime = Date.now(),
 	    absDelta = Math.abs(deltaY),
 	    diff = currTime - firstEventTime,
-	    callEvent = diff < MAX_SCROLL_EVENT_TIME,
-	    slowScroll = Math.abs(deltaY) < MAX_DELTA_AS_SLOW_SCROLL;
+	    callEvent = diff < this.config.maxScrollEventTime,
+	    slowScroll = Math.abs(deltaY) < this.config.maxDeltaWhenSlowScroll;
 
 	// set max delta of current scroll
 	if (absDelta > currentEventMaxDelta) {
@@ -164,10 +159,10 @@ var isCallEvent = function isCallEvent(event, delta, deltaX, deltaY) {
 
 	// clear current scroll
 	clearTimeout(timerClearEventTime);
-	timerClearEventTime = setTimeout(clearEventTime, AGAIN_LISTEN_FOR_EVENTS);
+	timerClearEventTime = setTimeout(clearEventTime, this.config.timeAgainListenForScrollEvents);
 
 	// for slow scrolls (touchapad or magic mouse)
-	if (slowScroll && currentEventMaxDelta < MAX_DELTA_AS_SLOW_SCROLL) {
+	if (slowScroll && currentEventMaxDelta < this.config.maxDeltaWhenSlowScroll) {
 		return true;
 	}
 
@@ -175,17 +170,17 @@ var isCallEvent = function isCallEvent(event, delta, deltaX, deltaY) {
 };
 
 var onScroll = function onScroll(event, delta, deltaX, deltaY) {
-	if (isCallEvent(event, delta, deltaX, deltaY)) {
-		this.onScrollFunction(calcCorrectDelta(deltaY, currentEventDirection), currentEventDirection);
+	if (isCallEvent.call(this, event, delta, deltaX, deltaY)) {
+		this.onScrollFunction(calcCorrectDelta.call(this, deltaY, currentEventDirection), currentEventDirection);
 	}
 };
 
-var _class = function _class(el, onScrollFunction) {
+var _class = function _class(config, onScrollFunction) {
 	_classCallCheck(this, _class);
 
-	this.el = el;
+	this.config = config;
 	this.onScrollFunction = onScrollFunction;
-	Hamster(this.el).wheel(onScroll.bind(this));
+	Hamster(this.config.wrapper).wheel(onScroll.bind(this));
 };
 
 exports.default = _class;
@@ -228,8 +223,15 @@ var defaults = {
 	timeBlockSlideDetectAfterDetect: 2500,
 	timeShowItemAfterStartSlide: 300,
 
+	// state controller
 	maxSpeedScrolling: 80, // all animations is currentScroll * bounce
 	moveBackAccellarate: 2.8, // all animations is currentScroll * bounce
+
+	// scroll handler
+	maxScrollEventTime: 300,
+	timeAgainListenForScrollEvents: 50,
+	maxDeltaWhenSlowScroll: 15,
+	maxAllowedScrollDelta: 100,
 
 	beforeSlide: function beforeSlide() {},
 	afterSlide: function afterSlide() {},
@@ -817,7 +819,7 @@ var _class = function () {
     this.scrolling = false;
     this.active = true;
     this.currentDelta = 0;
-    this.scrollManagerInst = new _ScrollHandler2.default(this.config.wrapper, this.detectScroll.bind(this));
+    this.scrollManagerInst = new _ScrollHandler2.default(this.config, this.detectScroll.bind(this));
   }
 
   _createClass(_class, [{

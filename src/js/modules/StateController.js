@@ -97,7 +97,7 @@ export default class {
 		this.scrolling = false;
 		this.active = true;
 		this.currentDelta = 0;
-		this.scrollManagerInst = new ScrollManager(this.config.wrapper, this.detectScroll.bind(this));
+		this.scrollManagerInst = new ScrollManager(this.config, this.detectScroll.bind(this));
 	}
 
 	disable(){

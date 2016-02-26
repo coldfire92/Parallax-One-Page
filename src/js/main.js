@@ -21,8 +21,15 @@ const defaults = {
 	timeBlockSlideDetectAfterDetect : 2500,
 	timeShowItemAfterStartSlide : 300,
 
+	// state controller
 	maxSpeedScrolling : 80, // all animations is currentScroll * bounce
 	moveBackAccellarate : 2.8, // all animations is currentScroll * bounce
+
+	// scroll handler
+	maxScrollEventTime : 300,
+	timeAgainListenForScrollEvents : 50,
+	maxDeltaWhenSlowScroll : 15,
+	maxAllowedScrollDelta : 100,
 
 	beforeSlide : function(){},
 	afterSlide : function(){},

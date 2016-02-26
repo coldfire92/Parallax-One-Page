@@ -1,10 +1,5 @@
 'use strict';
 
-const MAX_SCROLL_EVENT_TIME = 300;
-const AGAIN_LISTEN_FOR_EVENTS = 50;
-const MAX_DELTA_AS_SLOW_SCROLL = 15;
-const MAX_ALLOWED_DELTA = 100;
-
 var firstEventTime = false,
 	currentEventDirection = false,
 	currentEventMaxDelta = 0,
@@ -20,8 +15,8 @@ var clearEventTime = function(){
 var calcCorrectDelta = function(delta){
 	var absDelta = Math.abs(delta);
 
-	if(absDelta > MAX_ALLOWED_DELTA){ // max delta 
-		delta = (currentEventDirection === 'UP') ? MAX_ALLOWED_DELTA : -MAX_ALLOWED_DELTA;
+	if(absDelta > this.config.maxAllowedScrollDelta){ // max delta 
+		delta = (currentEventDirection === 'UP') ? this.config.maxAllowedScrollDelta : -this.config.maxAllowedScrollDelta;
 	}
 
 	return delta;
@@ -37,8 +32,8 @@ var isCallEvent = function(event, delta, deltaX, deltaY){
 	var currTime = Date.now(),
 		absDelta = Math.abs(deltaY),
 		diff = currTime - firstEventTime,
-		callEvent = (diff < MAX_SCROLL_EVENT_TIME),
-		slowScroll = (Math.abs(deltaY) < MAX_DELTA_AS_SLOW_SCROLL);
+		callEvent = (diff < this.config.maxScrollEventTime),
+		slowScroll = (Math.abs(deltaY) < this.config.maxDeltaWhenSlowScroll);
 
 	// set max delta of current scroll
 	if(absDelta > currentEventMaxDelta) {
@@ -47,10 +42,10 @@ var isCallEvent = function(event, delta, deltaX, deltaY){
 	
 	// clear current scroll
 	clearTimeout(timerClearEventTime);
-	timerClearEventTime = setTimeout(clearEventTime, AGAIN_LISTEN_FOR_EVENTS);
+	timerClearEventTime = setTimeout(clearEventTime, this.config.timeAgainListenForScrollEvents);
 
 	// for slow scrolls (touchapad or magic mouse)
-	if(slowScroll && (currentEventMaxDelta < MAX_DELTA_AS_SLOW_SCROLL) ){
+	if(slowScroll && (currentEventMaxDelta < this.config.maxDeltaWhenSlowScroll) ){
 		return true;		
 	}
 
@@ -58,15 +53,17 @@ var isCallEvent = function(event, delta, deltaX, deltaY){
 };
 
 var onScroll = function(event, delta, deltaX, deltaY){
-	if(isCallEvent(event, delta, deltaX, deltaY)){
-		this.onScrollFunction(calcCorrectDelta(deltaY, currentEventDirection), currentEventDirection);
+	if(isCallEvent.call(this,event, delta, deltaX, deltaY)){
+		this.onScrollFunction(
+			calcCorrectDelta.call(this, deltaY, currentEventDirection), 
+			currentEventDirection);
 	}
 };
 
 export default class {
-	constructor(el, onScrollFunction){
-		this.el = el;
+	constructor(config, onScrollFunction){
+		this.config = config;
 		this.onScrollFunction = onScrollFunction;
-		Hamster(this.el).wheel(onScroll.bind(this));
+		Hamster(this.config.wrapper).wheel(onScroll.bind(this));
 	}
 }
