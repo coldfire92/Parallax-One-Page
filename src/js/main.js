@@ -18,6 +18,7 @@ const defaults = {
 	slidesCounts : 4,
 	easingSlideWrapper : 'easeIn',
 	animationDuration : 60 * 0.5,
+	slideAnimationTime : 400,
 
 	timeHoldAnimationAfterMove : 100,
 	timeBlockSlideDetectAfterDetect : 2500,

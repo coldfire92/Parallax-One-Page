@@ -50,7 +50,11 @@ var animateSlideChange = function(){
 	}
 	
 	if(!callStartShowAnimationCallback){
-		setTimeout(startShowAnimation.bind(this), this.config.timeShowItemAfterStartSlide);
+		var diff = Math.abs(this.currentSlide - this.beforeSlide);
+		var timeScrollBeforeDestinySlide = (diff - 1) * this.config.slideAnimationTime;
+		var timeFireEvent = this.config.timeShowItemAfterStartSlide + timeScrollBeforeDestinySlide;
+
+		setTimeout(startShowAnimation.bind(this), timeFireEvent);
 		callStartShowAnimationCallback = true;
 	}
 
