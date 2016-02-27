@@ -1,7 +1,7 @@
 {
   "name": "parallax-one-page",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.1",
+  "description": "Create amazing one page scroll parallax pages",
   "main": "build/parallaxOnePage.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -24,7 +24,7 @@
     "watchify": "^3.7.0"
   },
   "author": "Michał Pawełczyk",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "hamsterjs": "^1.1.2"
   }

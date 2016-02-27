@@ -1,0 +1,22 @@
+{
+  "name": "ParallaxOnePage",
+  "authors": [
+    "Michał Pawełczyk https://github.com/coldfire92"
+  ],
+  "description": "Create amazing one page scroll parallax pages",
+  "main": [
+    "build/parallaxOnePage.js"
+  ],
+  "keywords": [
+    "scrolling",
+    "parallax",
+    "one_page"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "demo"
+  ],
+  "dependencies": {}
+}
