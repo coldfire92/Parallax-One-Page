@@ -1,0 +1,105 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <title>Parallax One Page</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <link rel="stylesheet" type="text/css" href="css/demo.css">
+    </head>
+    <body>
+
+        <nav>
+            <ul>
+                <li>First</li>
+                <li>Second</li>
+                <li>Third</li>
+                <li>Fourth</li>
+            </ul>
+        </nav>
+
+        <div data-parallax-bounce-global="2" data-animation-showing-disable="true" class="mobile"></div>
+
+        <div id="scroll-wrapper">
+                        
+            <section data-name="first" style="background: green;">
+                <div data-parallax-bounce="3" class="item"></div>
+                <div data-parallax-bounce="3.52" data-showing-delay="100" class="item"></div>
+                <div data-parallax-bounce="2" data-showing-delay="40" class="scroll-down item">Scroll down</div>
+            </section>
+            
+            <section data-name="second" style="background: blue;">
+                <div data-parallax-bounce="3" data-showing-delay="50"  class="item"></div>
+                <div data-parallax-bounce="3.52" data-showing-delay="30" class="item"></div>
+            </section>
+
+            <section data-name="third" style="background: yellow;">
+                
+                <div data-parallax-bounce="3" data-showing-delay="20" class="item"></div>
+                <div data-parallax-bounce="3.52" data-showing-delay="10" class="item"></div>
+            </section>
+            <section data-name="fourth" style="background: brown;">
+                Fourth
+            </section>
+
+        </div>  
+        
+        <script src="../build/parallaxOnePage.js"></script> 
+        
+        <script> 
+
+            var links = document.querySelectorAll('nav li');
+            var currentLink = links[0];
+            currentLink.classList.add('active');
+
+
+            var inst = getParallaxOnePage({
+                wrapper : document.querySelector('#scroll-wrapper'),
+                beforeSlide : function(beforeSlide, currentSlide){
+                    console.log('beforeSlideCallback '+ beforeSlide + ' => ' + currentSlide);
+                },
+                afterSlide : function(beforeSlide, currentSlide){
+                    console.log('afterSlideCallback '+ beforeSlide + ' => ' + currentSlide);
+                },
+                startShowItemsAnimation : function(beforeSlide, currentSlide){
+                    console.log('startShowHideAnimationCallback '+ beforeSlide + ' => ' + currentSlide);
+                    currentLink.classList.remove('active');
+                    currentLink = document.querySelector('nav li:nth-of-type('+ currentSlide + ')');
+                    currentLink.classList.add('active');
+                }
+            });
+
+            // Menu
+            
+            Array.prototype.forEach.call(links, function(link, index){
+                (function(key){
+                    link.addEventListener('click', function(e){
+                      if(inst.slideTo(key + 1)){
+                            currentLink.classList.remove('active');
+                            currentLink = e.target;
+                            currentLink.classList.add('active');
+                      }
+                    });    
+                })(index);
+            });
+
+            // Scroll Down
+            
+            document.querySelector('.scroll-down').addEventListener('click', function(){
+                inst.slideDown();
+            });
+
+            // Play / Pause
+
+            document.addEventListener('keyup', function(e){
+                if(e.code === 'Space'){
+                    inst.toggleEnable();
+                }   
+            });
+        
+        </script>        
+</body>
+</html>
