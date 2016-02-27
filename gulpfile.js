@@ -67,13 +67,9 @@ function css(){
 
 function watch() {
     js(true);
+    css();
     gulp.watch('./src/css/*.css',css);
 }
-
-gulp.task('build', function() {  
-    js(); 
-    css();
-});
 
 gulp.task('watch', watch);
 gulp.task('default', ['watch']);
