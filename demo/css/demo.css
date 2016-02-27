@@ -1,0 +1,89 @@
+
+.mobile {
+	width: 200px;
+	height: 400px;
+	background : red;
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	margin-left: 150px;
+	margin-top: -200px;
+	z-index: 99;
+}
+
+nav {
+	position: fixed;
+	height: 50px;
+	width: 100%;
+	background: rgba(255,255,255,.5);
+	left: 0;
+	top: 0;
+	z-index: 99;
+}
+
+nav ul li {
+	display: inline-block;
+	// padding: 10px;
+	margin: 10px;
+	cursor: pointer;
+}
+
+nav ul li.active {
+	background: yellow;
+}
+
+div#scroll-wrapper section[data-name="first"] .item:nth-of-type(1){
+	width: 400px;
+	height: 200px;
+	margin-left: -300px;
+	margin-top: -120px;
+	background: #fff;
+}
+
+div#scroll-wrapper section[data-name="first"] .item:nth-of-type(2){
+	background: yellow;
+	width: 400px;
+	height: 40px;
+	margin-left: -350px;
+	margin-top: -150px;
+}
+
+div#scroll-wrapper section[data-name="first"] .item.scroll-down {
+	background: white;
+	width: 40px;
+	height: 40px;
+	margin-left: -350px;
+	margin-top: -100px;
+}
+
+div#scroll-wrapper section[data-name="second"] .item:nth-of-type(1){
+	width: 400px;
+	height: 200px;
+	margin-left: -300px;
+	margin-top: -120px;
+	background: #fff;
+}
+
+div#scroll-wrapper section[data-name="second"] .item:nth-of-type(2){
+	background: yellow;
+	width: 400px;
+	height: 40px;
+	margin-left: -350px;
+	margin-top: -150px;
+}
+
+div#scroll-wrapper section[data-name="third"] .item:nth-of-type(1){
+	width: 400px;
+	height: 200px;
+	margin-left: -300px;
+	margin-top: -120px;
+	background: #fff;
+}
+
+div#scroll-wrapper section[data-name="third"] .item:nth-of-type(2){
+	background: yellow;
+	width: 400px;
+	height: 40px;
+	margin-left: -350px;
+	margin-top: -150px;
+}
