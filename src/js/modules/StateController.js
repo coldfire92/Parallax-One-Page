@@ -42,7 +42,6 @@ var getCurrentState = function(){
 
 var calcSpeed = function(state){
    this.acceleration = calcAccelerate.call(this);
-   // console.log(state);
    
    switch(state){
       case 'SCROLLING_UP'   : currentSpeed = currentSpeed + this.acceleration; break;
@@ -80,7 +79,6 @@ export default class {
 	}
 	
 	detectScroll(delta, direction){
-		 // console.log(delta);
 	   this.scrolling = true;
 		 this.direction = direction;
 		 this.currentDelta = delta; 
@@ -95,17 +93,19 @@ export default class {
 	constructor(config){
     this.config = config;
 		this.scrolling = false;
-		this.active = true;
+		this.active = false;
 		this.currentDelta = 0;
 		this.scrollManagerInst = new ScrollManager(this.config, this.detectScroll.bind(this));
 	}
 
 	disable(){
-		this.active = false;
+     this.active = false;
+     this.scrollManagerInst.disable();
 	}
 
 	enable(){
-		this.active = true;
+    this.active = true;
+    this.scrollManagerInst.enable();
 		tick.call(this);
 	}
 

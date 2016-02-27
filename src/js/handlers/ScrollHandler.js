@@ -58,6 +58,10 @@ var isCallEvent = function(event, delta, deltaX, deltaY){
 };
 
 var onScroll = function(event, delta, deltaX, deltaY){
+	if(!this.active){
+		return;
+	}
+
 	if(isCallEvent.call(this,event, delta, deltaX, deltaY)){
 		this.onScrollFunction(
 			calcCorrectDelta.call(this, deltaY, currentEventDirection), 
@@ -66,9 +70,19 @@ var onScroll = function(event, delta, deltaX, deltaY){
 };
 
 export default class {
+
+	enable(){
+		this.active = true;
+		Hamster(window).wheel(onScroll.bind(this));
+	}
+
+	disable(){
+		this.active = false;
+	}
+
 	constructor(config, onScrollFunction){
 		this.config = config;
+		this.active = false;
 		this.onScrollFunction = onScrollFunction;
-		Hamster(window).wheel(onScroll.bind(this));
 	}
 }
