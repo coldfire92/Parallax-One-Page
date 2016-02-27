@@ -101,6 +101,10 @@ export default class {
 		globalStartShowItemsAnimationFn = fn;
 	}
 
+	updateDom(sections){
+		this.ItemContainer.updateDom(sections);
+	}
+
 	slideDown(){
 		if(this.currentSlide < this.slidesCount){
 			var id = this.currentSlide + 1;

@@ -85,6 +85,11 @@ class parallaxOnePage {
 		}
 	}
 
+	updateDom(){
+		this.settings.sections = this.settings.wrapper.querySelectorAll('section');
+		this.slidesWrapperInst.updateDom(this.settings.sections);	
+	}
+
 	setEnable(){
 		this.stateControllerInst.enable();
 		this.enable = true;

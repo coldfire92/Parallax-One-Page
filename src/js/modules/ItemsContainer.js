@@ -26,6 +26,12 @@ var getItems = function(){
 
 export default class {
   
+  updateDom(sections){
+      this.config.sections = sections;
+      this.items = [];
+      getItems.call(this);
+  }
+
    enable(){
       this.items.forEach((item) => item.enable());
    }
