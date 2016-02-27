@@ -4,6 +4,7 @@
 import StateController from './modules/StateController.js';
 import SlidesWrapper from './modules/SlidesWrapper.js';
 import BodyClassManager from './modules/BodyClassManager.js';
+import KeyboardHandler from './handlers/KeyboardHandler.js';
 import extend from './utils/extend.js';
 
 
@@ -92,11 +93,13 @@ class parallaxOnePage {
 
 	setEnable(){
 		this.stateControllerInst.enable();
+		this.keyboardHandlerInst.enable();
 		this.enable = true;
 	}
 
 	setDisable(){
 		this.stateControllerInst.disable();
+		this.keyboardHandlerInst.disable();
 		this.enable = false;
 	}
 
@@ -120,6 +123,12 @@ class parallaxOnePage {
 
 	 	// bodyClassManager
 	 	this.bodyClassManagerInst = new BodyClassManager(this.settings);
+
+	 	// Keyboard
+	 	this.keyboardHandlerInst = new KeyboardHandler();
+	 	this.keyboardHandlerInst.addSpaceAction(this.slideDown.bind(this));
+	 	this.keyboardHandlerInst.addArrowUpAction(this.slideUp.bind(this));
+	 	this.keyboardHandlerInst.addArrowDownAction(this.slideDown.bind(this));
 
 	 	// enable
 	 	this.setEnable.call(this); 	
