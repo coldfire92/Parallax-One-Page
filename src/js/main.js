@@ -13,15 +13,15 @@ import extend from './utils/extend.js';
 const defaults = {
 	wrapper : document.createElement('div'),
 	sections : [],
-	bounceWrapper : 2.14,
-	maxParralaxWrapper : 50,
+	bounceWrapper : 3.14,
+	maxParralaxWrapper : 30,
 	slidesCounts : 4,
 	
 	easingSlideWrapper : 'easeIn',
 	easingParallax : 'easeIn',
 	animationDuration : 60 * 0.5,
 	showItemsAnimatinTime: 750,
-	slideAnimationTime : 400,
+	slideAnimationTime : 300,
 
 
 	timeHoldAnimationAfterMove : 100,
