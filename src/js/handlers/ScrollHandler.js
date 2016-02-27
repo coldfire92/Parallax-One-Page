@@ -1,5 +1,7 @@
 'use strict';
 
+import Device from './../utils/Device.js';
+
 var firstEventTime = false,
 	currentEventDirection = false,
 	currentEventMaxDelta = 0,
@@ -19,6 +21,9 @@ var calcCorrectDelta = function(delta){
 		delta = (currentEventDirection === 'UP') ? this.config.maxAllowedScrollDelta : -this.config.maxAllowedScrollDelta;
 	}
 
+	if(Device.isChromeOnWindows()){
+		return delta + 3;
+	}
 	return delta;
 };
 
