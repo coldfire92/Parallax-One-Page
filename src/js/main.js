@@ -16,13 +16,18 @@ const defaults = {
 	bounceWrapper : 2.14,
 	maxParralaxWrapper : 50,
 	slidesCounts : 4,
+	
 	easingSlideWrapper : 'easeIn',
+	easingParallax : 'easeIn',
 	animationDuration : 60 * 0.5,
+	showItemsAnimatinTime: 750,
 	slideAnimationTime : 400,
+
 
 	timeHoldAnimationAfterMove : 100,
 	timeBlockSlideDetectAfterDetect : 2500,
-	timeShowItemAfterStartSlide : 300,
+	
+	timeShowItemAfterStartSlide : 350,
 
 	// state controller
 	maxSpeedScrolling : 80, // all animations is currentScroll * bounce

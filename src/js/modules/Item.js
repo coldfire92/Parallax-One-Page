@@ -25,13 +25,13 @@ export default class {
 
 			setTimeout(function(){
 				this.el.classList.remove('animate-show');
-			}.bind(this), this.configItem.showingDelay + this.timeShowItemAfterStartSlide);
+			}.bind(this), this.configItem.showingDelay + this.mainConfig.showItemsAnimatinTime);
 
 			setTimeout(function(){
 				this.ParallaxAnimationInst.enable();
 				this.el.classList.remove(`direction-${direction}`);
 				console.log('Finish show up animation');
-			}.bind(this), this.configItem.showingDelay + this.timeShowItemAfterStartSlide + 20);
+			}.bind(this), this.configItem.showingDelay + this.mainConfig.showItemsAnimatinTime + 120);
 
 		} else if(from === this.slideNumber){
 			this.el.classList.remove('show');
@@ -47,7 +47,6 @@ export default class {
 	}
 
     constructor(el, mainConfig, configItem, slideNumber){
-        console.log(slideNumber);
  	    this.el = el;
  	    this.mainConfig = mainConfig;
  	    this.currentSlide = 1;

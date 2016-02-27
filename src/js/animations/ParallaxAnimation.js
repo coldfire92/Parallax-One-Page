@@ -5,7 +5,7 @@ import Easings from './../utils/Easings.js';
 var animate = function(){
    this.beginOffset = this.currentOffset;
    this.changeOffset = this.finishOffset - this.beginOffset;
-   this.currentOffset = Easings[this.config.easingSlideWrapper](1, this.beginOffset, this.changeOffset, this.config.animationDuration);  
+   this.currentOffset = Easings[this.config.easingParallax](1, this.beginOffset, this.changeOffset, this.config.animationDuration);  
    
    if(Math.abs(this.currentOffset) < 0.1){
       this.currentOffset = 0;

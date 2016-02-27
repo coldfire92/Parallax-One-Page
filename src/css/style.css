@@ -27,12 +27,12 @@ div#scroll-wrapper {
 
 				&.direction-up {
 					transform: translate(0,-150px);
-					transition-timing-function: ease-out;
+					transition-timing-function: 'ease-out';
 				}
 
 				&.direction-down {
 					transform: translate(0,150px);
-					transition-timing-function: ease-in;
+					transition-timing-function: 'ease-in';
 				}
 
 				&.animate-show {
