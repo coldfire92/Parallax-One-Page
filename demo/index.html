@@ -47,6 +47,7 @@
 
         </div>  
         
+        <script src="http://monospaced.github.io/hamster.js/hamster.js"></script>        
         <script src="../build/parallaxOnePage.js"></script> 
         
         <script> 
@@ -55,9 +56,9 @@
             var currentLink = links[0];
             currentLink.classList.add('active');
 
-
             var inst = getParallaxOnePage({
                 wrapper : document.querySelector('#scroll-wrapper'),
+                scrollHandler : Hamster,
                 beforeSlide : function(beforeSlide, currentSlide){
                     console.log('beforeSlideCallback '+ beforeSlide + ' => ' + currentSlide);
                 },

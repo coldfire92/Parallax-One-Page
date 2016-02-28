@@ -73,7 +73,11 @@ export default class {
 
 	enable(){
 		this.active = true;
-		Hamster(window).wheel(onScroll.bind(this));
+		if(!window.Hamster){
+			this.config.scrollHandler(window).wheel(onScroll.bind(this));
+		} else {
+			window.Hamster(window).wheel(onScroll.bind(this));
+		}
 	}
 
 	disable(){

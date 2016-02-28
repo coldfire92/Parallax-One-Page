@@ -20,8 +20,7 @@ var processors = [postCssNested];
    ========================================================================== */
 
 var mainFile = ['./src/js/main.js'];
-var libs = './node_modules/hamsterjs/hamster.js';
-
+var dependencies = [];
 
 function js(watch) {
   var bundler = watchify(browserify(mainFile, { debug: true }).transform(babel));
@@ -31,7 +30,7 @@ function js(watch) {
        .on('error', function(err) { console.error(err); this.emit('end'); })
       .pipe(source('main.js'))
       .pipe(buffer())
-      .pipe(addsrc(libs))
+      .pipe(addsrc(dependencies))
       .pipe(concat('parallaxOnePage.js'))
       .pipe(uglify({
         mangle : false,
