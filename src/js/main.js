@@ -135,4 +135,16 @@ class parallaxOnePage {
 	}
 }
 
-window.getParallaxOnePage = (config) => new parallaxOnePage(config); 
+if (typeof window.define === 'function' && window.define.amd) {
+  // AMD
+  window.define('parallaxOnePage', [], function(){
+    return parallaxOnePage;
+  });
+} else if (typeof exports === 'object') {
+  // CommonJS
+  module.exports = parallaxOnePage;
+}
+
+  // Browser global
+window.getParallaxOnePage = (config) => new parallaxOnePage(config);
+
