@@ -6,6 +6,7 @@ import Easings from './../utils/Easings.js';
 
 var isFinish,
 	callStartShowAnimationCallback = false,
+	cssSlideAnimation = false,
 	globalBeforeFn,
 	globalAfterFn,
 	globalStartShowItemsAnimationFn;
@@ -51,11 +52,18 @@ var beforeSlideCallback = function(){
 /* Animation
    ========================================================================== */
 
-var animateSlideChange = function(){
-	if(isFinish){
-		return;
-	}
-	
+var afterSlideAnimation = function(){
+	callStartShowAnimationCallback = false;
+	cssSlideAnimation = false;
+	afterSlideCallback.call(this);
+	this.config.wrapper.style.transition = '';
+	this.config.wrapper.style.transitionTimingFunction = '';
+	this.ParallaxAnimationInst.changeGlobalTranslate(this.finishOffset);
+	this.currentOffset = this.finishOffset;
+	this.state='PARALLAX';
+};
+
+var animateSlideChange = function(){	
 	if(!callStartShowAnimationCallback){
 		var diff = Math.abs(this.currentSlide - this.beforeSlide);
 		var timeScrollBeforeDestinySlide = (diff - 1) * this.config.slideAnimationTime;
@@ -65,33 +73,13 @@ var animateSlideChange = function(){
 		callStartShowAnimationCallback = true;
 	}
 
-	var absCurrentOffset = Math.abs(this.currentOffset),
-		absFinish = Math.abs(this.finishOffset);
-
-	if(this.state === 'SLIDE_DOWN'){
-		isFinish = (absCurrentOffset > (absFinish - 1));
-		this.beginOffset = this.currentOffset;
-    	this.changeOffset = this.finishOffset - this.beginOffset;
-	} else {
-		isFinish = (absCurrentOffset < (absFinish + 1));
-		this.beginOffset = this.currentOffset;
-    	this.changeOffset = Math.abs(this.finishOffset - this.beginOffset);
+	if(!cssSlideAnimation){
+		this.config.wrapper.style.transition = `all ${this.config.slideAnimationTime}ms`;
+		this.config.wrapper.style.transform = `translateY(${this.finishOffset}px)`;
+		this.config.wrapper.style.transitionTimingFunction = this.config.easingSlideAnimation;
+		setTimeout(afterSlideAnimation.bind(this), this.config.slideAnimationTime + this.config.timeHoldAnimationAfterMove);
+		cssSlideAnimation = true;
 	}
-
-	if(isFinish){
-		this.ParallaxAnimationInst.changeGlobalTranslate(this.finishOffset);
-		this.currentOffset = this.finishOffset;
-		setTimeout(function(){
-			isFinish = false;
-			callStartShowAnimationCallback = false;
-			afterSlideCallback.call(this);
-			this.state='PARALLAX';
-		}.bind(this), this.config.timeHoldAnimationAfterMove);
-		return;
-	} 
-
-	this.currentOffset = Easings[this.config.easingSlideWrapper](1, this.beginOffset, this.changeOffset, this.config.animationDuration);
-	this.config.wrapper.style.transform = `translateY(${this.currentOffset}px)`;
 };
 
 export default class {

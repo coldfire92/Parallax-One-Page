@@ -22,11 +22,13 @@ const defaults = {
 	resizeEvents : true,
 	callSlidedEventsAfterStart : true,
 
-	easingSlideWrapper : 'easeIn',
+
 	easingParallax : 'easeIn',
 	animationDuration : 60 * 0.5,
 	showItemsAnimatinTime: 750,
-	slideAnimationTime : 300,
+	
+	slideAnimationTime : 600,
+	easingSlideAnimation : 'easeIn',
 
 	timeHoldAnimationAfterMove : 100,
 	timeBlockSlideDetectAfterDetect : 2500,

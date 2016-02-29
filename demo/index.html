@@ -56,17 +56,15 @@
             var currentLink = links[0];
             currentLink.classList.add('active');
 
-
-            var updateDom = function(){
-
-                console.log( document.querySelector('[data-name="fourth"]') );
-                
+            var updateDom = function(){ 
                 document.querySelector('section[data-name="fourth"]').innerHTML = '<div data-parallax-bounce="3" data-showing-delay="20" class="item"></div><div data-parallax-bounce="3.52" data-showing-delay="10" class="item"></div>';
-            }
+            };
 
             var inst = getParallaxOnePage({
                 wrapper : document.querySelector('#scroll-wrapper'),
                 scrollHandler : Hamster,
+                slideAnimationTime : 900,
+                easingSlideAnimation : 'ease-in',
                 beforeSlide : function(beforeSlide, currentSlide){
                     console.log('beforeSlideCallback '+ beforeSlide + ' => ' + currentSlide);
                 },
