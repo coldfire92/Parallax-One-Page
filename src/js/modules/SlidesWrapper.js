@@ -25,6 +25,13 @@ var detectSlideChange = function(speed, direction){
 	func.call(this);
 };
 
+/* Utils
+   ========================================================================== */
+
+var calcSlideAnimationOffset = function(){
+	return (this.currentSlide - 1) * window.innerHeight * -1;
+};
+
 /* Slides Callback
    ========================================================================== */
 
@@ -89,6 +96,12 @@ var animateSlideChange = function(){
 
 export default class {
 
+	resize(){
+		var offset = calcSlideAnimationOffset.call(this);
+		this.currentOffset = offset;
+		this.ParallaxAnimationInst.changeGlobalTranslate(offset);
+	}
+
 	addBeforeSlide(fn){
 		globalBeforeFn = fn;
 	}
@@ -132,7 +145,7 @@ export default class {
 
 		this.beforeSlide = this.currentSlide;
 		this.currentSlide = id;
-		this.finishOffset = (this.currentSlide - 1) * window.innerHeight * -1;
+		this.finishOffset = calcSlideAnimationOffset.call(this);
 		this.currentOffset = this.ParallaxAnimationInst.getCurrentOffset();	
 		this.state = (this.beforeSlide < this.currentSlide) ?  'SLIDE_DOWN' : 'SLIDE_UP';
 		beforeSlideCallback.call(this);

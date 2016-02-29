@@ -19,6 +19,7 @@ const defaults = {
 	slidesCounts : 4,
 	
 	autoEnable : true,
+	resizeEvents : true,
 	callSlidedEventsAfterStart : true,
 
 	easingSlideWrapper : 'easeIn',
@@ -47,6 +48,11 @@ const defaults = {
 	startShowItemsAnimation : function(){}
 };
 
+/* Vars
+   ========================================================================== */
+
+var timerResizeEvent;
+
 /* Settings
    ========================================================================== */
 
@@ -64,6 +70,11 @@ var afterSlide = function(beforeSlide, currentSlide){
 var startShowItemsAnimation = function(beforeSlide, currentSlide){
    	this.settings.startShowItemsAnimation(beforeSlide, currentSlide);
    	this.bodyClassManagerInst.startShowItemsAnimation(beforeSlide, currentSlide);         
+};
+
+var resize = function(){
+	console.log('resize');
+	this.slidesWrapperInst.resize();
 };
 
 class parallaxOnePage {
@@ -138,6 +149,15 @@ class parallaxOnePage {
 	 		this.setEnable.call(this); 		
 	 	}
 
+	 	// resize
+	 	if(this.settings.resizeEvents){
+	 		window.addEventListener('resize', () => {
+	 			clearTimeout(timerResizeEvent);
+	 			timerResizeEvent = setTimeout(resize.bind(this),400);
+	 		});
+	 	}
+
+	 	// start events
 	 	if(this.settings.callSlidedEventsAfterStart){
 	 		beforeSlide.call(this,1,1);
 	 		afterSlide.call(this,1,1);
