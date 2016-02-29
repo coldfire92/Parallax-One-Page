@@ -5,6 +5,8 @@ import ScrollManager from './../handlers/ScrollHandler.js';
 
 var timer = null,
 	  currentSpeed = 0,
+    timeSleep = 0,
+    sleep = false,
 	  speedAbs;
 
 var tickFn = function(){};
@@ -59,16 +61,26 @@ var setNotScrolling = function(){
 };
 
 var tick = function(){
-   if(!this.active){
+   if(!this.active || sleep){
 	 	return;
    }
-    
+
+   if(timeSleep > this.config.sleepAfterTicks){
+      sleep = true;
+      timeSleep = 0;
+      console.log('sleep');
+      return;
+   }
+  
    var state = getCurrentState.call(this);
+   calcSpeed.call(this,state);
    // console.log(`State: ${state}, Scrolling: ${this.scrolling}, speed: ${currentSpeed}, direction: ${this.direction}`);
  
-   calcSpeed.call(this,state);
-   tickFn(currentSpeed, this.direction);
+   if(currentSpeed === 0){
+      timeSleep++;
+   }
    
+   tickFn(currentSpeed, this.direction);
    requestAnimationFrame(tick.bind(this));
 };
 
@@ -84,6 +96,11 @@ export default class {
 		 this.currentDelta = delta; 
 		 clearTimeout(timer);
 		 timer = setTimeout(setNotScrolling.bind(this), 160);
+
+     if(sleep){
+        sleep = false;
+        tick.call(this);
+     }
 	}
 
 	onTick(fn){
