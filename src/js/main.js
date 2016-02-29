@@ -28,7 +28,7 @@ const defaults = {
 	showItemsAnimatinTime: 750,
 	
 	slideAnimationTime : 600,
-	easingSlideAnimation : 'easeIn',
+	easingSlideAnimation : 'ease-in',
 
 	timeHoldAnimationAfterMove : 100,
 	timeBlockSlideDetectAfterDetect : 2500,

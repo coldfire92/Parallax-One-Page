@@ -66,17 +66,17 @@
                 slideAnimationTime : 900,
                 easingSlideAnimation : 'ease-in',
                 beforeSlide : function(beforeSlide, currentSlide){
-                    console.log('beforeSlideCallback '+ beforeSlide + ' => ' + currentSlide);
+                    // console.log('beforeSlideCallback '+ beforeSlide + ' => ' + currentSlide);
                 },
                 afterSlide : function(beforeSlide, currentSlide){
-                    console.log('afterSlideCallback '+ beforeSlide + ' => ' + currentSlide);
+                    // console.log('afterSlideCallback '+ beforeSlide + ' => ' + currentSlide);
                     if(currentSlide === 4){
                         updateDom();
                         inst.updateDOM();
                     }
                 },
                 startShowItemsAnimation : function(beforeSlide, currentSlide){
-                    console.log('startShowHideAnimationCallback '+ beforeSlide + ' => ' + currentSlide);
+                    // console.log('startShowHideAnimationCallback '+ beforeSlide + ' => ' + currentSlide);
                     currentLink.classList.remove('active');
                     currentLink = document.querySelector('nav li:nth-of-type('+ currentSlide + ')');
                     currentLink.classList.add('active');

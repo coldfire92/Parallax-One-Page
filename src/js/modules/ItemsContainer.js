@@ -51,8 +51,12 @@ export default class {
   	  this.items.forEach((item) => item.update(delta, direction));
    }
 
-   slide(from, to){
-      this.items.forEach((item) => item.slide(from, to));
+   show(from, to){
+      this.items.forEach((item) => item.show(from, to));
+   }
+
+   hide(from, to){
+      this.items.forEach((item) => item.hide(from, to));
    }
 
 }

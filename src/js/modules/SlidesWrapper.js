@@ -2,10 +2,8 @@
 
 import ParallaxAnimation from './../animations/ParallaxAnimation.js';
 import ItemsContainer from './ItemsContainer.js';
-import Easings from './../utils/Easings.js';
 
-var isFinish,
-	callStartShowAnimationCallback = false,
+var callStartShowAnimationCallback = false,
 	cssSlideAnimation = false,
 	globalBeforeFn,
 	globalAfterFn,
@@ -37,7 +35,7 @@ var calcSlideAnimationOffset = function(){
    ========================================================================== */
 
 var startShowAnimation = function(){
-	this.ItemContainer.slide(this.beforeSlide, this.currentSlide);
+	this.ItemsContainerInst.show(this.beforeSlide, this.currentSlide);
 	globalStartShowItemsAnimationFn(this.beforeSlide, this.currentSlide);
 };
 
@@ -49,19 +47,22 @@ var beforeSlideCallback = function(){
 	globalBeforeFn(this.beforeSlide, this.currentSlide);
 };
 
-/* Animation
-   ========================================================================== */
-
 var afterSlideAnimation = function(){
 	callStartShowAnimationCallback = false;
 	cssSlideAnimation = false;
 	afterSlideCallback.call(this);
+
 	this.config.wrapper.style.transition = '';
 	this.config.wrapper.style.transitionTimingFunction = '';
+	this.ItemsContainerInst.hide(this.beforeSlide, this.currentSlide);
+
 	this.ParallaxAnimationInst.changeGlobalTranslate(this.finishOffset);
 	this.currentOffset = this.finishOffset;
 	this.state='PARALLAX';
 };
+
+/* Slide Animation
+   ========================================================================== */
 
 var animateSlideChange = function(){	
 	if(!callStartShowAnimationCallback){
@@ -103,7 +104,7 @@ export default class {
 	}
 
 	updateDom(sections){
-		this.ItemContainer.updateDom(sections, this.currentSlide);
+		this.ItemsContainerInst.updateDom(sections, this.currentSlide);
 	}
 
 	slideDown(){
@@ -142,7 +143,7 @@ export default class {
 
     constructor(config){
   	    this.config = config;
-  	    this.ItemContainer = new ItemsContainer(config);
+  	    this.ItemsContainerInst = new ItemsContainer(config);
   	    this.ParallaxAnimationInst = new ParallaxAnimation(config.wrapper, this.config.bounceWrapper, this.config);
   		this.ParallaxAnimationInst.setMaxOffset(detectSlideChange.bind(this), this.config.maxParralaxWrapper);
   	       
@@ -153,13 +154,13 @@ export default class {
   	    this.slidesCount = this.config.slidesCounts;
   		this.state = 'PARALLAX';
 
-  		this.ItemContainer.slide( this.beforeSlide, this.currentSlide); // aniamte current slide
+  		this.ItemsContainerInst.show( this.beforeSlide, this.currentSlide); // animate current slide
     }
 
     update(speed, direction){
     	if(this.state === 'PARALLAX'){
     		this.ParallaxAnimationInst.update(speed, direction);
-    		this.ItemContainer.update(speed, direction);
+    		this.ItemsContainerInst.update(speed, direction);
     	} else {
     		animateSlideChange.call(this);
     	}
