@@ -14,8 +14,11 @@ import isInt from './utils/isInt.js';
 const defaults = {
 	wrapper : document.createElement('div'),
 	sections : [],
+	
 	bounceWrapper : 3.14,
-	maxParralaxWrapper : 30,
+	slideOffsetDetect : 50,
+	maxParralaxWrapper : 100,
+
 	slidesCounts : 4,
 	
 	autoEnable : true,
@@ -27,9 +30,9 @@ const defaults = {
 	showItemsAnimatinTime: 750,
 	
 	slideAnimationTime : 500,
-	easingSlideAnimation : 'linear',
+	easingSlideAnimation : 'ease-in',
 
-	timeHoldParallaxAnimationAfterMove : 1200,
+	timeHoldParallaxAnimationAfterMove : 790,
 	timeBlockSlideDetectAfterDetect : 2500,
 	
 	timeShowItemAfterStartSlide : 550,
@@ -44,7 +47,7 @@ const defaults = {
 	maxDeltaWhenSlowScroll : 15,
 	maxAllowedScrollDelta : 100,
 
-	sleepAfterTicks : 50,
+	sleepAfterTicks : 200,
 
 	beforeSlide : function(){},
 	afterSlide : function(){},
@@ -76,21 +79,24 @@ var startShowItemsAnimation = function(beforeSlide, currentSlide){
 };
 
 var resize = function(){
-	console.log('resize');
 	this.slidesWrapperInst.resize();
+	this.stateControllerInst.wakeUp();
 };
 
 class parallaxOnePage {
   
 	slideUp(){
+		this.stateControllerInst.wakeUp();
 		return this.slidesWrapperInst.slideUp();
 	}
 
 	slideDown(){
+		this.stateControllerInst.wakeUp();
 		return this.slidesWrapperInst.slideDown();
 	}
 
 	slideTo(indexOrSlideName){
+		this.stateControllerInst.wakeUp();
 		var index = isInt(indexOrSlideName) ? indexOrSlideName : this.bodyClassManagerInst.getIndexOfSection(indexOrSlideName);
 		return (index) ? this.slidesWrapperInst.slideTo(index) : false;
 	}

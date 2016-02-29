@@ -147,7 +147,7 @@ export default class {
   	    this.config = config;
   	    this.ItemsContainerInst = new ItemsContainer(config);
   	    this.ParallaxAnimationInst = new ParallaxAnimation(config.wrapper, this.config.bounceWrapper, this.config);
-  		this.ParallaxAnimationInst.setMaxOffset(detectSlideChange.bind(this), this.config.maxParralaxWrapper);
+  		this.ParallaxAnimationInst.setMaxOffset(detectSlideChange.bind(this), this.config.slideOffsetDetect);
   	       
   	    // Slide Animation
   	    this.currentOffset = 0;
@@ -160,8 +160,6 @@ export default class {
     }
 
     update(speed, direction){
-    	console.log(this.state);
-    	
     	if(this.state === 'PARALLAX'){
     		this.ParallaxAnimationInst.update(speed, direction);
     		this.ItemsContainerInst.update(speed, direction);

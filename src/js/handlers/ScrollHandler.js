@@ -63,6 +63,7 @@ var onScroll = function(event, delta, deltaX, deltaY){
 	}
 
 	if(isCallEvent.call(this,event, delta, deltaX, deltaY)){
+		currentEventDirection = (deltaY > 0) ? 'UP' : 'DOWN';
 		this.onScrollFunction(
 			calcCorrectDelta.call(this, deltaY, currentEventDirection), 
 			currentEventDirection);

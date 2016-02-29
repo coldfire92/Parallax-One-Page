@@ -72,7 +72,7 @@ var tick = function(){
   
    var state = getCurrentState.call(this);
    calcSpeed.call(this,state);
-   // console.log(`State: ${state}, Scrolling: ${this.scrolling}, speed: ${currentSpeed}, direction: ${this.direction}`);
+   console.log(`State: ${state}, Scrolling: ${this.scrolling}, speed: ${currentSpeed}, direction: ${this.direction}`);
  
    if(currentSpeed === 0){
       timeSleep++;
@@ -84,6 +84,13 @@ var tick = function(){
 
 export default class {
 
+  wakeUp(){
+    if(sleep){
+      sleep = false;
+      tick.call(this);
+    }
+  }
+
 	resetSpeed(){
 		currentSpeed = 0;
 	}
@@ -94,11 +101,7 @@ export default class {
 		 this.currentDelta = delta; 
 		 clearTimeout(timer);
 		 timer = setTimeout(setNotScrolling.bind(this), 160);
-
-     if(sleep){
-        sleep = false;
-        tick.call(this);
-     }
+     this.wakeUp();
 	}
 
 	onTick(fn){
