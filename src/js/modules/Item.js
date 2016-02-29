@@ -29,7 +29,6 @@ export default class {
 		setTimeout(function(){
 			this.ParallaxAnimationInst.enable();
 			this.el.classList.remove(`direction-${direction}`);
-			console.log('Finish show up animation');
 		}.bind(this), this.configItem.showingDelay + this.mainConfig.showItemsAnimatinTime + 120);
 	}
 

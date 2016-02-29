@@ -15,8 +15,7 @@ var calcAccelerate = function(){
 	  return Math.abs(this.currentDelta) / 2;
 };
 
-var getCurrentState = function(){    
-    
+var getCurrentState = function(){        
     speedAbs = Math.abs(currentSpeed);
   
     if( this.scrolling && speedAbs < this.config.maxSpeedScrolling ){
@@ -68,7 +67,6 @@ var tick = function(){
    if(timeSleep > this.config.sleepAfterTicks){
       sleep = true;
       timeSleep = 0;
-      console.log('sleep');
       return;
    }
   

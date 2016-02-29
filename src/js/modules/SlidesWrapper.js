@@ -35,8 +35,8 @@ var calcSlideAnimationOffset = function(){
    ========================================================================== */
 
 var startShowAnimation = function(){
-	this.ItemsContainerInst.show(this.beforeSlide, this.currentSlide);
 	globalStartShowItemsAnimationFn(this.beforeSlide, this.currentSlide);
+	this.ItemsContainerInst.show(this.beforeSlide, this.currentSlide);
 };
 
 var afterSlideCallback = function(){
@@ -48,17 +48,19 @@ var beforeSlideCallback = function(){
 };
 
 var afterSlideAnimation = function(){
-	callStartShowAnimationCallback = false;
-	cssSlideAnimation = false;
 	afterSlideCallback.call(this);
 
 	this.config.wrapper.style.transition = '';
 	this.config.wrapper.style.transitionTimingFunction = '';
-	this.ItemsContainerInst.hide(this.beforeSlide, this.currentSlide);
-
 	this.ParallaxAnimationInst.changeGlobalTranslate(this.finishOffset);
 	this.currentOffset = this.finishOffset;
-	this.state='PARALLAX';
+	
+	setTimeout( ()=>{
+		callStartShowAnimationCallback = false;
+		this.state='PARALLAX';
+		cssSlideAnimation = false;
+		this.ItemsContainerInst.hide(this.beforeSlide, this.currentSlide);
+	}, this.config.timeHoldParallaxAnimationAfterMove );
 };
 
 /* Slide Animation
@@ -78,7 +80,7 @@ var animateSlideChange = function(){
 		this.config.wrapper.style.transition = `all ${this.config.slideAnimationTime}ms`;
 		this.config.wrapper.style.transform = `translateY(${this.finishOffset}px)`;
 		this.config.wrapper.style.transitionTimingFunction = this.config.easingSlideAnimation;
-		setTimeout(afterSlideAnimation.bind(this), this.config.slideAnimationTime + this.config.timeHoldAnimationAfterMove);
+		setTimeout(afterSlideAnimation.bind(this), this.config.slideAnimationTime + 20);
 		cssSlideAnimation = true;
 	}
 };
@@ -158,6 +160,8 @@ export default class {
     }
 
     update(speed, direction){
+    	console.log(this.state);
+    	
     	if(this.state === 'PARALLAX'){
     		this.ParallaxAnimationInst.update(speed, direction);
     		this.ItemsContainerInst.update(speed, direction);

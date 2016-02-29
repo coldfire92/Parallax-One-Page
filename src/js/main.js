@@ -22,18 +22,17 @@ const defaults = {
 	resizeEvents : true,
 	callSlidedEventsAfterStart : true,
 
-
 	easingParallax : 'easeIn',
 	animationDuration : 60 * 0.5,
 	showItemsAnimatinTime: 750,
 	
-	slideAnimationTime : 600,
-	easingSlideAnimation : 'ease-in',
+	slideAnimationTime : 500,
+	easingSlideAnimation : 'linear',
 
-	timeHoldAnimationAfterMove : 100,
+	timeHoldParallaxAnimationAfterMove : 1200,
 	timeBlockSlideDetectAfterDetect : 2500,
 	
-	timeShowItemAfterStartSlide : 350,
+	timeShowItemAfterStartSlide : 550,
 
 	// state controller
 	maxSpeedScrolling : 80, // all animations is currentScroll * bounce
@@ -44,6 +43,8 @@ const defaults = {
 	timeAgainListenForScrollEvents : 50,
 	maxDeltaWhenSlowScroll : 15,
 	maxAllowedScrollDelta : 100,
+
+	sleepAfterTicks : 50,
 
 	beforeSlide : function(){},
 	afterSlide : function(){},
@@ -61,10 +62,10 @@ var timerResizeEvent;
 var beforeSlide = function(beforeSlide, currentSlide){
 	this.settings.beforeSlide(beforeSlide, currentSlide);
 	this.bodyClassManagerInst.beforeSlide(beforeSlide, currentSlide);
-    this.stateControllerInst.resetSpeed.bind(this);
 };
 
 var afterSlide = function(beforeSlide, currentSlide){
+	this.stateControllerInst.resetSpeed.bind(this);
  	this.settings.afterSlide(beforeSlide, currentSlide);
  	this.bodyClassManagerInst.afterSlide(beforeSlide, currentSlide);
 };
