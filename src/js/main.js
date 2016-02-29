@@ -18,12 +18,14 @@ const defaults = {
 	maxParralaxWrapper : 30,
 	slidesCounts : 4,
 	
+	autoEnable : true,
+	callSlidedEventsAfterStart : true,
+
 	easingSlideWrapper : 'easeIn',
 	easingParallax : 'easeIn',
 	animationDuration : 60 * 0.5,
 	showItemsAnimatinTime: 750,
 	slideAnimationTime : 300,
-
 
 	timeHoldAnimationAfterMove : 100,
 	timeBlockSlideDetectAfterDetect : 2500,
@@ -86,7 +88,7 @@ class parallaxOnePage {
 		}
 	}
 
-	updateDom(){
+	updateDOM(){
 		this.settings.sections = this.settings.wrapper.querySelectorAll('section');
 		this.slidesWrapperInst.updateDom(this.settings.sections);	
 	}
@@ -131,7 +133,15 @@ class parallaxOnePage {
 	 	this.keyboardHandlerInst.addArrowDownAction(this.slideDown.bind(this));
 
 	 	// enable
-	 	this.setEnable.call(this); 	
+	 	if(this.settings.autoEnable){
+	 		this.setEnable.call(this); 		
+	 	}
+
+	 	if(this.settings.callSlidedEventsAfterStart){
+	 		beforeSlide.call(this,1,1);
+	 		afterSlide.call(this,1,1);
+	 		startShowItemsAnimation.call(this,1,1);
+	 	}
 	}
 }
 
@@ -147,4 +157,3 @@ if (typeof window.define === 'function' && window.define.amd) {
 
   // Browser global
 window.getParallaxOnePage = (config) => new parallaxOnePage(config);
-
