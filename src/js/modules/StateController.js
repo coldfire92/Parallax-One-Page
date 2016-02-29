@@ -76,6 +76,8 @@ var tick = function(){
  
    if(currentSpeed === 0){
       timeSleep++;
+   } else if(timeSleep > 0){
+      timeSleep--;
    }
    
    tickFn(currentSpeed, this.direction);
