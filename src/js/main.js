@@ -6,7 +6,7 @@ import SlidesWrapper from './modules/SlidesWrapper.js';
 import BodyClassManager from './modules/BodyClassManager.js';
 import KeyboardHandler from './handlers/KeyboardHandler.js';
 import extend from './utils/extend.js';
-
+import isInt from './utils/isInt.js';
 
 /* Config
    ========================================================================== */
@@ -76,8 +76,9 @@ class parallaxOnePage {
 		return this.slidesWrapperInst.slideDown();
 	}
 
-	slideTo(index){
-		return this.slidesWrapperInst.slideTo(index);
+	slideTo(indexOrSlideName){
+		var index = isInt(indexOrSlideName) ? indexOrSlideName : this.bodyClassManagerInst.getIndexOfSection(indexOrSlideName);
+		return (index) ? this.slidesWrapperInst.slideTo(index) : false;
 	}
 
 	toggleEnable(){

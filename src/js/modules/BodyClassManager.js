@@ -11,6 +11,16 @@ var currentSectionName = '';
 
 export default class {
 
+	getIndexOfSection(searchName){
+		var searchIndex = false;
+		this.sectionsNames.forEach(function(name, index){
+			if(name === searchName){
+				searchIndex = index + 1; // slides number from 1
+			}
+		});
+		return searchIndex;
+	}
+
 	getNameOfSection(index){
 		return this.sectionsNames[index-1];
 	}

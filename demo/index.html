@@ -14,10 +14,10 @@
 
         <nav>
             <ul>
-                <li>First</li>
-                <li>Second</li>
-                <li>Third</li>
-                <li>Fourth</li>
+                <li data-name="first">First</li>
+                <li data-name="second">Second</li>
+                <li data-name="third">Third</li>
+                <li data-name="fourth">Fourth</li>
             </ul>
         </nav>
 
@@ -73,19 +73,32 @@
                 }
             });
 
-            // Menu
+            // Menu (call by section name)
             
             Array.prototype.forEach.call(links, function(link, index){
-                (function(key){
-                    link.addEventListener('click', function(e){
-                      if(inst.slideTo(key + 1)){
-                            currentLink.classList.remove('active');
-                            currentLink = e.target;
-                            currentLink.classList.add('active');
-                      }
-                    });    
-                })(index);
+               link.addEventListener('click', function(e){
+                  var name = e.target.dataset.name;
+                  if(inst.slideTo(name)){
+                        currentLink.classList.remove('active');
+                        currentLink = e.target;
+                        currentLink.classList.add('active');
+                  }
+                });
             });
+
+            // Menu (call by index)
+            
+            // Array.prototype.forEach.call(links, function(link, index){
+            //     (function(key){
+            //         link.addEventListener('click', function(e){
+            //           if(inst.slideTo(key + 1)){
+            //                 currentLink.classList.remove('active');
+            //                 currentLink = e.target;
+            //                 currentLink.classList.add('active');
+            //           }
+            //         });    
+            //     })(index);
+            // });
 
             // Scroll Down
             
