@@ -102,7 +102,7 @@ export default class {
 	}
 
 	updateDom(sections){
-		this.ItemContainer.updateDom(sections);
+		this.ItemContainer.updateDom(sections, this.currentSlide);
 	}
 
 	slideDown(){

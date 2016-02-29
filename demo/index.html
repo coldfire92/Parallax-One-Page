@@ -56,6 +56,14 @@
             var currentLink = links[0];
             currentLink.classList.add('active');
 
+
+            var updateDom = function(){
+
+                console.log( document.querySelector('[data-name="fourth"]') );
+                
+                document.querySelector('section[data-name="fourth"]').innerHTML = '<div data-parallax-bounce="3" data-showing-delay="20" class="item"></div><div data-parallax-bounce="3.52" data-showing-delay="10" class="item"></div>';
+            }
+
             var inst = getParallaxOnePage({
                 wrapper : document.querySelector('#scroll-wrapper'),
                 scrollHandler : Hamster,
@@ -64,6 +72,10 @@
                 },
                 afterSlide : function(beforeSlide, currentSlide){
                     console.log('afterSlideCallback '+ beforeSlide + ' => ' + currentSlide);
+                    if(currentSlide === 4){
+                        updateDom();
+                        inst.updateDOM();
+                    }
                 },
                 startShowItemsAnimation : function(beforeSlide, currentSlide){
                     console.log('startShowHideAnimationCallback '+ beforeSlide + ' => ' + currentSlide);
@@ -99,6 +111,10 @@
             //         });    
             //     })(index);
             // });
+
+            // Update Dom
+            
+
 
             // Scroll Down
             

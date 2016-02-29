@@ -87,3 +87,19 @@ div#scroll-wrapper section[data-name="third"] .item:nth-of-type(2){
 	margin-left: -350px;
 	margin-top: -150px;
 }
+
+div#scroll-wrapper section[data-name="fourth"] .item:nth-of-type(1){
+	width: 400px;
+	height: 200px;
+	margin-left: -300px;
+	margin-top: -120px;
+	background: #fff;
+}
+
+div#scroll-wrapper section[data-name="fourth"] .item:nth-of-type(2){
+	background: yellow;
+	width: 400px;
+	height: 40px;
+	margin-left: -350px;
+	margin-top: -150px;
+}

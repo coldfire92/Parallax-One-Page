@@ -26,10 +26,11 @@ var getItems = function(){
 
 export default class {
   
-  updateDom(sections){
+  updateDom(sections, currentSection){
       this.config.sections = sections;
       this.items = [];
       getItems.call(this);
+      this.slide(0, currentSection); // run show items animation
   }
 
    enable(){
