@@ -72,7 +72,7 @@ var tick = function(){
   
    var state = getCurrentState.call(this);
    calcSpeed.call(this,state);
-   console.log(`State: ${state}, Scrolling: ${this.scrolling}, speed: ${currentSpeed}, direction: ${this.direction}`);
+   // console.log(`State: ${state}, Scrolling: ${this.scrolling}, speed: ${currentSpeed}, direction: ${this.direction}`);
  
    if(currentSpeed === 0){
       timeSleep++;

@@ -2,6 +2,7 @@
 
 import ParallaxAnimation from './../animations/ParallaxAnimation.js';
 import ItemsContainer from './ItemsContainer.js';
+import ElementStyleManager from './ElementStyleManager.js';
 
 var callStartShowAnimationCallback = false,
 	cssSlideAnimation = false,
@@ -49,9 +50,7 @@ var beforeSlideCallback = function(){
 
 var afterSlideAnimation = function(){
 	afterSlideCallback.call(this);
-
-	this.config.wrapper.style.transition = '';
-	this.config.wrapper.style.transitionTimingFunction = '';
+	this.ElementStyleManagerInst.setTransition();
 	this.ParallaxAnimationInst.changeGlobalTranslate(this.finishOffset);
 	this.currentOffset = this.finishOffset;
 	
@@ -77,9 +76,8 @@ var animateSlideChange = function(){
 	}
 
 	if(!cssSlideAnimation){
-		this.config.wrapper.style.transition = `all ${this.config.slideAnimationTime}ms`;
-		this.config.wrapper.style.transform = `translateY(${this.finishOffset}px)`;
-		this.config.wrapper.style.transitionTimingFunction = this.config.easingSlideAnimation;
+		this.ElementStyleManagerInst.setTransition(this.config.slideAnimationTime, this.config.easingSlideAnimation);
+		this.ElementStyleManagerInst.setTranslateY(this.finishOffset);
 		setTimeout(afterSlideAnimation.bind(this), this.config.slideAnimationTime + 20);
 		cssSlideAnimation = true;
 	}
@@ -148,7 +146,8 @@ export default class {
   	    this.ItemsContainerInst = new ItemsContainer(config);
   	    this.ParallaxAnimationInst = new ParallaxAnimation(config.wrapper, this.config.bounceWrapper, this.config);
   		this.ParallaxAnimationInst.setMaxOffset(detectSlideChange.bind(this), this.config.slideOffsetDetect);
-  	       
+  	    this.ElementStyleManagerInst = new ElementStyleManager(config.wrapper);
+
   	    // Slide Animation
   	    this.currentOffset = 0;
   	    this.currentSlide = 1;

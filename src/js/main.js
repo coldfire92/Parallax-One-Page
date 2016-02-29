@@ -32,7 +32,7 @@ const defaults = {
 	slideAnimationTime : 500,
 	easingSlideAnimation : 'ease-in',
 
-	timeHoldParallaxAnimationAfterMove : 790,
+	timeHoldParallaxAnimationAfterMove : 840,
 	timeBlockSlideDetectAfterDetect : 2500,
 	
 	timeShowItemAfterStartSlide : 550,

@@ -1,6 +1,7 @@
 'use strict';
 
 import Easings from './../utils/Easings.js';
+import ElementStyleManager from './../modules/ElementStyleManager.js';
 
 var animate = function(){
    this.beginOffset = this.currentOffset;
@@ -11,7 +12,7 @@ var animate = function(){
       this.currentOffset = 0;
    }
    
-   this.el.style.transform = `translateY(${this.currentOffset}px)`; 
+   this.ElementStyleManagerInst.setTranslateY(this.currentOffset);
 };
 
 export default class {
@@ -55,6 +56,8 @@ export default class {
     this.beginOffset = 0;
     this.finishOffset = 0;
     this.changeOffset = 0;
+
+    this.ElementStyleManagerInst = new ElementStyleManager(this.el);
 
     // after increase
   	this.afterIncreaseMaxCallback = false;
