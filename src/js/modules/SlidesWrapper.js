@@ -89,6 +89,10 @@ export default class {
 		this.ParallaxAnimationInst.changeGlobalTranslate(offset);
 	}
 
+	isSlideAnimation(){
+		return cssSlideAnimation;
+	}
+
 	addBeforeSlide(fn){
 		globalBeforeFn = fn;
 	}

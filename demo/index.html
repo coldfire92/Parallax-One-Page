@@ -79,6 +79,7 @@
                         updateDom();
                         inst.updateDOM();
                     }
+                    // console.log('Slide animation' + inst.isSlideAnimation() );
                 },
                 startShowItemsAnimation : function(beforeSlide, currentSlide){
                     // console.log('startShowHideAnimationCallback '+ beforeSlide + ' => ' + currentSlide);
@@ -114,6 +115,12 @@
             //         });    
             //     })(index);
             // });
+
+            // isSlideAnimation
+            
+            setInterval(function(){
+                console.log(inst.isSlideAnimation());
+            }, 100);
 
             // Scroll Down
             

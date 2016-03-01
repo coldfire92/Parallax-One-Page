@@ -109,6 +109,10 @@ class parallaxOnePage {
 		}
 	}
 
+	isSlideAnimation(){
+		return this.slidesWrapperInst.isSlideAnimation();
+	}
+
 	updateDOM(){
 		this.settings.sections = this.settings.wrapper.querySelectorAll('section');
 		this.slidesWrapperInst.updateDom(this.settings.sections);	
@@ -177,12 +181,12 @@ class parallaxOnePage {
 
 if (typeof window.define === 'function' && window.define.amd) {
   // AMD
-  window.define('parallaxOnePage', [], function(){
+   window.define('parallaxOnePage', [], function(){
     return parallaxOnePage;
   });
 } else if (typeof exports === 'object') {
   // CommonJS
-  module.exports = parallaxOnePage;
+   module.exports = parallaxOnePage;
 }
 
   // Browser global
