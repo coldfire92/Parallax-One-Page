@@ -30,7 +30,7 @@ export default class {
       this.config.sections = sections;
       this.items = [];
       getItems.call(this);
-      // this.show(0, currentSection); // run show items animation
+      this.show(0, currentSection); // run show items animation
   }
 
    enable(){
