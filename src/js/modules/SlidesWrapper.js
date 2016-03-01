@@ -67,10 +67,12 @@ var afterSlideAnimation = function(){
 
 var animateSlideChange = function(){
 	var diff = Math.abs(this.currentSlide - this.beforeSlide);
-
-	var slideAnimationTime = diff * this.config.slideAnimationTime;
-	var timeToFireShowItemCallback = (slideAnimationTime - this.config.slideAnimationTime) + this.config.timeShowItemAfterStartSlide;
+	var divide = (diff == 1) ? 1 : this.config.makeAnimationFasterWhenSlideToFarSlides; // when slide to far slides, make more fast animation
 	
+	var slideAnimationTime = (diff * this.config.slideAnimationTime) / divide;
+	var slideAnimationTimeBetweenDestinySlide = ((diff - 1) * this.config.slideAnimationTime) / divide;
+	var timeToFireShowItemCallback = slideAnimationTimeBetweenDestinySlide + (this.config.timeShowItemAfterStartSlide / divide);
+
 	// show item callback
 	setTimeout(startShowAnimation.bind(this), timeToFireShowItemCallback);
 

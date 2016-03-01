@@ -31,6 +31,7 @@ const defaults = {
 	
 	slideAnimationTime : 500,
 	easingSlideAnimation : 'ease-in',
+	makeAnimationFasterWhenSlideToFarSlides : 2,
 
 	timeHoldParallaxAnimationAfterMove : 840,
 	timeBlockSlideDetectAfterDetect : 2500,
