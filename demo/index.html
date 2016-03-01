@@ -42,7 +42,7 @@
                 <div data-parallax-bounce="3.52" data-showing-delay="10" class="item"></div>
             </section>
             <section data-name="fourth" style="background: brown;">
-                Fourth
+            
             </section>
 
         </div>  
@@ -54,10 +54,15 @@
 
             var links = document.querySelectorAll('nav li');
             var currentLink = links[0];
+            var updatetDom = false
             currentLink.classList.add('active');
 
             var updateDom = function(){ 
+                if(updatetDom){
+                    return;
+                }
                 document.querySelector('section[data-name="fourth"]').innerHTML = '<div data-parallax-bounce="3" data-showing-delay="20" class="item"></div><div data-parallax-bounce="3.52" data-showing-delay="10" class="item"></div>';
+                updatetDom = true;
             };
 
             var inst = getParallaxOnePage({
@@ -109,10 +114,6 @@
             //         });    
             //     })(index);
             // });
-
-            // Update Dom
-            
-
 
             // Scroll Down
             
