@@ -97,6 +97,10 @@ export default class {
 		currentSpeed = 0;
 	}
 	
+  getCurrentSpeed(){
+     return currentSpeed;
+  }
+
 	detectScroll(delta, direction){
 	   this.scrolling = true;
 		 this.direction = direction;

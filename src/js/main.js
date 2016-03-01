@@ -114,6 +114,10 @@ class parallaxOnePage {
 		return this.slidesWrapperInst.isSlideAnimation();
 	}
 
+	isParallaxAnimation(){
+		return (Math.abs(this.stateControllerInst.getCurrentSpeed()) > 0) && !this.isSlideAnimation();
+	}
+
 	updateDOM(){
 		this.settings.sections = this.settings.wrapper.querySelectorAll('section');
 		this.slidesWrapperInst.updateDom(this.settings.sections);	
