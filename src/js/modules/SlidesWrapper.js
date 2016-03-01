@@ -65,22 +65,20 @@ var afterSlideAnimation = function(){
 /* Slide Animation
    ========================================================================== */
 
-var animateSlideChange = function(){	
-	if(!callStartShowAnimationCallback){
-		var diff = Math.abs(this.currentSlide - this.beforeSlide);
-		var timeScrollBeforeDestinySlide = (diff - 1) * this.config.slideAnimationTime;
-		var timeFireEvent = this.config.timeShowItemAfterStartSlide + timeScrollBeforeDestinySlide;
+var animateSlideChange = function(){
+	var diff = Math.abs(this.currentSlide - this.beforeSlide);
 
-		setTimeout(startShowAnimation.bind(this), timeFireEvent);
-		callStartShowAnimationCallback = true;
-	}
+	var slideAnimationTime = diff * this.config.slideAnimationTime;
+	var timeToFireShowItemCallback = (slideAnimationTime - this.config.slideAnimationTime) + this.config.timeShowItemAfterStartSlide;
+	
+	// show item callback
+	setTimeout(startShowAnimation.bind(this), timeToFireShowItemCallback);
 
-	if(!cssSlideAnimation){
-		this.ElementStyleManagerInst.setTransition(this.config.slideAnimationTime, this.config.easingSlideAnimation);
-		this.ElementStyleManagerInst.setTranslateY(this.finishOffset);
-		setTimeout(afterSlideAnimation.bind(this), this.config.slideAnimationTime + 20);
-		cssSlideAnimation = true;
-	}
+	// start animation
+	this.ElementStyleManagerInst.setTransition(slideAnimationTime, this.config.easingSlideAnimation);
+	this.ElementStyleManagerInst.setTranslateY(this.finishOffset);
+	setTimeout(afterSlideAnimation.bind(this), slideAnimationTime + 20);
+	cssSlideAnimation = true;
 };
 
 export default class {
@@ -162,7 +160,7 @@ export default class {
     	if(this.state === 'PARALLAX'){
     		this.ParallaxAnimationInst.update(speed, direction);
     		this.ItemsContainerInst.update(speed, direction);
-    	} else {
+    	} else if(!cssSlideAnimation){
     		animateSlideChange.call(this);
     	}
     }
