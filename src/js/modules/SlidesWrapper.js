@@ -10,6 +10,15 @@ var callStartShowAnimationCallback = false,
 	globalAfterFn,
 	globalStartShowItemsAnimationFn;
 
+/* Debug
+   ========================================================================== */
+
+var changeState = function(){
+	if(this.config.debug){
+		console.log(`Set state "${this.state}"`);
+	}
+};
+
 /* Detect Slide Move
    ========================================================================== */
 
@@ -57,6 +66,7 @@ var afterSlideAnimation = function(){
 	setTimeout( ()=>{
 		callStartShowAnimationCallback = false;
 		this.state='PARALLAX';
+		changeState.call(this);
 		cssSlideAnimation = false;
 		this.ItemsContainerInst.hide(this.beforeSlide, this.currentSlide);
 	}, this.config.timeHoldParallaxAnimationAfterMove );
@@ -141,6 +151,7 @@ export default class {
 		this.finishOffset = calcSlideAnimationOffset.call(this);
 		this.currentOffset = this.ParallaxAnimationInst.getCurrentOffset();	
 		this.state = (this.beforeSlide < this.currentSlide) ?  'SLIDE_DOWN' : 'SLIDE_UP';
+		changeState.call(this);
 		beforeSlideCallback.call(this);
 		return true;
 	}
@@ -158,6 +169,7 @@ export default class {
   	    this.beforeSlide = 1;
   	    this.slidesCount = this.config.slidesCounts;
   		this.state = 'PARALLAX';
+  		changeState.call(this);
 
   		this.ItemsContainerInst.show( this.beforeSlide, this.currentSlide); // animate current slide
     }

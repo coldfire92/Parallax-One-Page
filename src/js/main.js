@@ -12,6 +12,9 @@ import isInt from './utils/isInt.js';
    ========================================================================== */
 
 const defaults = {
+
+	debug : false,
+
 	wrapper : document.createElement('div'),
 	sections : [],
 	
