@@ -11,6 +11,7 @@ var addsrc = require('gulp-add-src');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var gutil = require('gulp-util');
+var browserSync = require('browser-sync').create();
 
 var postcss = require('gulp-postcss');
 var postCssNested = require('postcss-nested');
@@ -51,6 +52,22 @@ function js(watch) {
   rebundle();
 }
 
+/* Server
+   ========================================================================== */
+
+gulp.task('serve', [], function() {
+    js(true);
+    css();
+
+    browserSync.init({
+        server: {
+            baseDir: ['.']
+        }
+    });
+
+    gulp.watch('./src/css/*.css',css);
+});
+
 /* Css
    ========================================================================== */
 
@@ -61,14 +78,4 @@ function css(){
       .pipe(gulp.dest('./demo/css'));
 }
 
-/* Watch
-   ========================================================================== */
-
-function watch() {
-    js(true);
-    css();
-    gulp.watch('./src/css/*.css',css);
-}
-
-gulp.task('watch', watch);
-gulp.task('default', ['watch']);
+gulp.task('default', ['serve']);
