@@ -2,6 +2,7 @@
 
 import Easings from './../utils/Easings.js';
 import ElementStyleManager from './../modules/ElementStyleManager.js';
+import Device from './../utils/Device.js';
 
 var animate = function(){
    this.beginOffset = this.currentOffset;
@@ -48,7 +49,7 @@ export default class {
   	this.el = el;
     this.config = config;
   	this.active = true;
-    this.bounce = bounce;
+    this.bounce = Device.isWindows() ? bounce * this.config.increaseBounceWindows : bounce;
     
   	// count params
   	this.transYGlobal = 0;
@@ -71,9 +72,9 @@ export default class {
 
     var relativeY = Math.round(speed * this.bounce * 100) / 100;
     this.finishOffset = relativeY + this.transYGlobal; 
-        
+  
     if(this.afterIncreaseMaxCallback && this.max){
-        if(Math.abs(relativeY) > this.max){
+        if(Math.abs(speed) > this.max){
           this.afterIncreaseMaxCallback(relativeY, direction);
         }
     } 

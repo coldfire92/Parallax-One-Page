@@ -2,6 +2,7 @@
 'use strict';
 
 import ScrollManager from './../handlers/ScrollHandler.js';
+import Device from './../utils/Device.js';
 
 var timer = null,
 	  currentSpeed = 0,
@@ -45,8 +46,18 @@ var calcSpeed = function(state){
    this.acceleration = calcAccelerate.call(this);
    
    switch(state){
-      case 'SCROLLING_UP'   : currentSpeed = currentSpeed + this.acceleration; break;
-      case 'SCROLLING_DOWN' : currentSpeed = currentSpeed - this.acceleration; break;
+      case 'SCROLLING_UP'   : 
+        currentSpeed = currentSpeed + this.acceleration; 
+        if(Device.isWindows()){
+            currentSpeed = currentSpeed * this.config.increaseSpeedAtWindows;
+        }
+        break;
+      case 'SCROLLING_DOWN' : 
+        currentSpeed = currentSpeed - this.acceleration; 
+        if(Device.isWindows()){
+            currentSpeed = currentSpeed * this.config.increaseSpeedAtWindows;
+        }
+        break;
       case 'MOVE_BACK_UP'   : currentSpeed = currentSpeed + this.config.moveBackAccellarate; break;
       case 'MOVE_BACK_DOWN' : currentSpeed = currentSpeed - this.config.moveBackAccellarate; break;
       case 'SCROLLING_MAX_UP' : currentSpeed = this.config.maxSpeedScrolling; break;

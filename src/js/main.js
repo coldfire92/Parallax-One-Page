@@ -15,9 +15,11 @@ const defaults = {
 	wrapper : document.createElement('div'),
 	sections : [],
 	
-	bounceWrapper : 3.14,
-	slideOffsetDetect : 50,
-	maxParralaxWrapper : 100,
+	bounceWrapper : 5,
+	increaseBounceWindows : 2,
+
+	slideOffsetDetect : 12,
+	maxParralaxWrapper : 240,
 
 	slidesCounts : 4,
 	
@@ -33,12 +35,13 @@ const defaults = {
 	easingSlideAnimation : 'ease-in',
 	makeAnimationFasterWhenSlideToFarSlides : 2,
 
-	timeHoldParallaxAnimationAfterMove : 840,
-	timeBlockSlideDetectAfterDetect : 2500,
+	timeHoldParallaxAnimationAfterMove : 140,
+	timeBlockSlideDetectAfterDetect : 1400,
 	
 	timeShowItemAfterStartSlide : 550,
 
 	// state controller
+	increaseSpeedAtWindows : 1.2,
 	maxSpeedScrolling : 80, // all animations is currentScroll * bounce
 	moveBackAccellarate : 2.8, // all animations is currentScroll * bounce
 
@@ -142,7 +145,7 @@ class parallaxOnePage {
 	 	this.settings = extend(defaults, options);
 	 	this.settings.sections = this.settings.wrapper.querySelectorAll('section');
 	 	this.settings.slidesCounts = this.settings.sections.length;
-
+	 	
 	 	// main
 	 	this.slidesWrapperInst = new SlidesWrapper(this.settings);
 	 	this.stateControllerInst = new StateController(this.settings);
