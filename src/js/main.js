@@ -42,6 +42,7 @@ const defaults = {
 	timeBlockSlideDetectAfterDetect : 1400,
 	
 	timeShowItemAfterStartSlide : 550,
+	resetSpeedAfterSlide : true,
 
 	// state controller
 	increaseSpeedAtWindows : 1.2,
@@ -75,7 +76,9 @@ var beforeSlide = function(beforeSlide, currentSlide){
 };
 
 var afterSlide = function(beforeSlide, currentSlide){
-	this.stateControllerInst.resetSpeed.bind(this);
+	if(this.settings.resetSpeedAfterSlide){
+		this.stateControllerInst.resetSpeed();
+	}
  	this.settings.afterSlide(beforeSlide, currentSlide);
  	this.bodyClassManagerInst.afterSlide(beforeSlide, currentSlide);
 };

@@ -105,7 +105,7 @@ export default class {
   }
 
 	resetSpeed(){
-		currentSpeed = 0;
+		 currentSpeed = 0;
 	}
 	
   getCurrentSpeed(){
