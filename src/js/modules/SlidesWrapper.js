@@ -24,9 +24,11 @@ var changeState = function(){
 
 var blockedSlideDetect = false;
 var detectSlideChange = function(speed, direction){
+	console.log('detect');
 	if(blockedSlideDetect){
 		return;
 	}
+	console.log('detect 2');
 
 	blockedSlideDetect = true;
 	setTimeout(()=> blockedSlideDetect = false, this.config.timeBlockSlideDetectAfterDetect);
@@ -90,6 +92,7 @@ var animateSlideChange = function(){
 	this.ElementStyleManagerInst.setTransition(slideAnimationTime, this.config.easingSlideAnimation);
 	this.ElementStyleManagerInst.setTranslateY(this.finishOffset);
 	setTimeout(afterSlideAnimation.bind(this), slideAnimationTime + 20);
+	beforeSlideCallback.call(this);
 	cssSlideAnimation = true;
 };
 
@@ -152,7 +155,6 @@ export default class {
 		this.currentOffset = this.ParallaxAnimationInst.getCurrentOffset();	
 		this.state = (this.beforeSlide < this.currentSlide) ?  'SLIDE_DOWN' : 'SLIDE_UP';
 		changeState.call(this);
-		beforeSlideCallback.call(this);
 		return true;
 	}
 

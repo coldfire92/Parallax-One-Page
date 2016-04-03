@@ -72,7 +72,7 @@ var timerResizeEvent;
 
 var beforeSlide = function(beforeSlide, currentSlide){
 	this.settings.beforeSlide(beforeSlide, currentSlide);
-	this.bodyClassManagerInst.beforeSlide(beforeSlide, currentSlide);
+	// this.bodyClassManagerInst.beforeSlide(beforeSlide, currentSlide);
 };
 
 var afterSlide = function(beforeSlide, currentSlide){
