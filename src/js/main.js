@@ -46,14 +46,14 @@ const defaults = {
 
 	// state controller
 	increaseSpeedAtWindows : 1.2,
-	maxSpeedScrolling : 80, // all animations is currentScroll * bounce
+	maxSpeedScrolling : 90, // all animations is currentScroll * bounce
 	moveBackAccellarate : 2.8, // all animations is currentScroll * bounce
 
 	// scroll handler
 	maxScrollEventTime : 300,
 	timeAgainListenForScrollEvents : 50,
 	maxDeltaWhenSlowScroll : 15,
-	maxAllowedScrollDelta : 100,
+	maxAllowedScrollDelta : 50,
 
 	sleepAfterTicks : 200,
 

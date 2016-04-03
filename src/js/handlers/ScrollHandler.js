@@ -19,11 +19,12 @@ var calcCorrectDelta = function(delta){
 
 	if(absDelta > this.config.maxAllowedScrollDelta){ // max delta 
 		delta = (currentEventDirection === 'UP') ? this.config.maxAllowedScrollDelta : -this.config.maxAllowedScrollDelta;
-	}
+	} else if(Device.isChromeOnWindows()){
+		// delta 
+	} else if(Device.isWindows()){
+		delta *= 10;
+	} 
 
-	if(Device.isChromeOnWindows()){
-		return delta + 3;
-	}
 	return delta;
 };
 

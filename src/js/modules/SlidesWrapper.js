@@ -24,12 +24,9 @@ var changeState = function(){
 
 var blockedSlideDetect = false;
 var detectSlideChange = function(speed, direction){
-	console.log('detect');
 	if(blockedSlideDetect){
 		return;
 	}
-	console.log('detect 2');
-
 	blockedSlideDetect = true;
 	setTimeout(()=> blockedSlideDetect = false, this.config.timeBlockSlideDetectAfterDetect);
 	var func = (direction === 'UP') ? this.slideUp : this.slideDown;
@@ -154,6 +151,7 @@ export default class {
 		this.finishOffset = calcSlideAnimationOffset.call(this);
 		this.currentOffset = this.ParallaxAnimationInst.getCurrentOffset();	
 		this.state = (this.beforeSlide < this.currentSlide) ?  'SLIDE_DOWN' : 'SLIDE_UP';
+		this.ItemsContainerInst.hide( this.beforeSlide, this.currentSlide); // animate current slide
 		changeState.call(this);
 		return true;
 	}

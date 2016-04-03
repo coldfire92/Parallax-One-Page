@@ -34,7 +34,12 @@ export default class {
 
 	hide(from, to){
 		if(from === this.slideNumber){
+			this.el.classList.add('animate-show');
 			this.el.classList.remove('show');
+
+			setTimeout(function(){
+				this.el.classList.remove('animate-show');
+			}.bind(this), 600);
 		}
 	}
 
