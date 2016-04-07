@@ -57,14 +57,16 @@ var beforeSlideCallback = function(){
 };
 
 var afterSlideAnimation = function(){
+	this.ItemsContainerInst.hide(this.beforeSlide, this.currentSlide);
 	afterSlideCallback.call(this);
 	this.ElementStyleManagerInst.setTransition();
 	this.ParallaxAnimationInst.changeGlobalTranslate(this.finishOffset);
+	this.stateItems = 'NONE';
 	this.currentOffset = this.finishOffset;
 	
 	setTimeout( ()=>{
 		callStartShowAnimationCallback = false;
-		this.state='PARALLAX';
+		this.stateWrapper='PARALLAX';
 		changeState.call(this);
 		cssSlideAnimation = false;
 		this.ItemsContainerInst.hide(this.beforeSlide, this.currentSlide);
@@ -142,7 +144,7 @@ export default class {
 	}
 
 	slideTo(id){	
-		if(id < 1 || id > this.slidesCount || this.state !== 'PARALLAX' || id === this.currentSlide) {
+		if(id < 1 || id > this.slidesCount || this.stateWrapper !== 'PARALLAX' || id === this.currentSlide) {
 			return false;
 		}
 
@@ -150,7 +152,7 @@ export default class {
 		this.currentSlide = id;
 		this.finishOffset = calcSlideAnimationOffset.call(this);
 		this.currentOffset = this.ParallaxAnimationInst.getCurrentOffset();	
-		this.state = (this.beforeSlide < this.currentSlide) ?  'SLIDE_DOWN' : 'SLIDE_UP';
+		this.stateWrapper = (this.beforeSlide < this.currentSlide) ?  'SLIDE_DOWN' : 'SLIDE_UP';
 		this.ItemsContainerInst.hide( this.beforeSlide, this.currentSlide); // animate current slide
 		changeState.call(this);
 		return true;
@@ -168,18 +170,20 @@ export default class {
   	    this.currentSlide = 1;
   	    this.beforeSlide = 1;
   	    this.slidesCount = this.config.slidesCounts;
-  		this.state = 'PARALLAX';
+  		this.stateWrapper = 'PARALLAX';
   		changeState.call(this);
 
   		this.ItemsContainerInst.show( this.beforeSlide, this.currentSlide); // animate current slide
     }
 
     update(speed, direction){
-    	if(this.state === 'PARALLAX'){
+    	if(this.stateWrapper === 'PARALLAX'){
     		this.ParallaxAnimationInst.update(speed, direction);
-    		this.ItemsContainerInst.update(speed, direction);
     	} else if(!cssSlideAnimation){
     		animateSlideChange.call(this);
     	}
+
+    	this.ItemsContainerInst.update(speed, direction);
+
     }
 }

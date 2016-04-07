@@ -65,6 +65,10 @@ export default class {
     this.max = false; 
   }
 
+  slideDetect(direction){
+     
+  }
+
   update(speed, direction){
   	if(!this.active){
   		return;
@@ -74,7 +78,7 @@ export default class {
     this.finishOffset = relativeY + this.transYGlobal; 
   
     if(this.afterIncreaseMaxCallback && this.max){
-        if(Math.abs(speed) > this.max){
+        if(Math.abs(relativeY) > this.max){
           this.afterIncreaseMaxCallback(relativeY, direction);
         }
     } 
