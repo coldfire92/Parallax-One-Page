@@ -19,11 +19,7 @@ var calcCorrectDelta = function(delta){
 
 	if(absDelta > this.config.maxAllowedScrollDelta){ // max delta 
 		delta = (currentEventDirection === 'UP') ? this.config.maxAllowedScrollDelta : -this.config.maxAllowedScrollDelta;
-	} else if(Device.isChromeOnWindows()){
-		// delta 
-	} else if(Device.isWindows()){
-		delta *= 10;
-	} 
+	}
 
 	return delta;
 };
@@ -38,7 +34,7 @@ var isCallEvent = function(event, delta, deltaX, deltaY){
 	var currTime = Date.now(),
 		absDelta = Math.abs(deltaY),
 		diff = currTime - firstEventTime,
-		callEvent = (diff < this.config.maxScrollEventTime),
+		callEvent = ( (diff < this.config.maxScrollEventTime) || (absDelta > 30) ),
 		slowScroll = (Math.abs(deltaY) < this.config.maxDeltaWhenSlowScroll);
 
 	// set max delta of current scroll
@@ -54,7 +50,7 @@ var isCallEvent = function(event, delta, deltaX, deltaY){
 	if(slowScroll && (currentEventMaxDelta < this.config.maxDeltaWhenSlowScroll) ){
 		return true;		
 	}
-
+	
 	return callEvent;
 };
 
