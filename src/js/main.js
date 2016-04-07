@@ -18,11 +18,11 @@ const defaults = {
 	wrapper : document.createElement('div'),
 	sections : [],
 	
-	bounceWrapper : 5,
+	bounceWrapper : 2,
 	increaseBounceWindows : 2,
 
-	slideOffsetDetect : 12,
-	maxParralaxWrapper : 240,
+	slideOffsetDetect : 40,
+	maxParralaxWrapper : 140,
 
 	slidesCounts : 4,
 	
@@ -32,28 +32,30 @@ const defaults = {
 
 	easingParallax : 'easeIn',
 	animationDuration : 60 * 0.5,
-	showItemsAnimatinTime: 750,
+	
+	showItemsAnimatinTime: 500,
+	timeShowItemAfterStartSlide : 350,
 	
 	slideAnimationTime : 500,
 	easingSlideAnimation : 'ease-in',
 	makeAnimationFasterWhenSlideToFarSlides : 2,
 
-	timeHoldParallaxAnimationAfterMove : 140,
+	timeHoldParallaxAnimationAfterMove : 100,
 	timeBlockSlideDetectAfterDetect : 1400,
 	
-	timeShowItemAfterStartSlide : 550,
+	
 	resetSpeedAfterSlide : true,
 
 	// state controller
 	increaseSpeedAtWindows : 1.2,
-	maxSpeedScrolling : 90, // all animations is currentScroll * bounce
-	moveBackAccellarate : 2.8, // all animations is currentScroll * bounce
+	maxSpeedScrolling : 20, // all animations is currentScroll * bounce
+	moveBackAccellarate : 3, // all animations is currentScroll * bounce
 
 	// scroll handler
 	maxScrollEventTime : 300,
 	timeAgainListenForScrollEvents : 50,
 	maxDeltaWhenSlowScroll : 15,
-	maxAllowedScrollDelta : 50,
+	maxAllowedScrollDelta : 10,
 
 	sleepAfterTicks : 200,
 
